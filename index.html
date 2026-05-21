@@ -2,7 +2,10 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1"
+    />
     <meta name="theme-color" content="#116b5b" />
     <title>작탁을 만들자!</title>
     <link rel="manifest" href="manifest.json" />
@@ -15,78 +18,135 @@
         <span>LTE 100%</span>
       </div>
 
-      <header class="app-bar">
-        <button class="icon-button" id="backButton" type="button" aria-label="홈으로">‹</button>
-        <div>
-          <p>작탁을 만들자!</p>
-          <h1 id="viewTitle">오늘 학습</h1>
-        </div>
-        <button class="icon-button" id="resetProgress" type="button" aria-label="초기화">↻</button>
+      <header class="app-bar" id="appBar">
+        <button class="app-bar-logo" id="appBarLogo" type="button" aria-label="홈으로, 작탁을 만들자!">
+          <div class="app-bar-tile" id="appBarTile" aria-hidden="true"></div>
+          <span class="app-bar-title">작탁을 만들자!</span>
+        </button>
       </header>
 
       <main class="app-content">
-        <section class="view active" id="dashboard" aria-labelledby="viewTitle">
-          <article class="hero-card">
-            <div>
-              <p class="eyebrow">리치 마작 입문</p>
-              <h2>패를 보고 역을 찾자</h2>
-              <p>패 종류, 기본 역, 점수를 짧게 익힙니다.</p>
+        <section class="view active" id="dashboard">
+          <article class="daily-quiz-card" aria-labelledby="dailyQuizTitle">
+            <div class="daily-quiz-header">
+              <div>
+                <p class="eyebrow">오늘의 손패</p>
+                <h2 id="dailyQuizTitle">데일리 퀴즈</h2>
+              </div>
+              <span class="daily-date-badge" id="dailyDateBadge"></span>
             </div>
-            <div class="hand-row" id="heroHand" aria-label="예시 손패"></div>
+            <p class="daily-quiz-lead" id="dailyQuizLead">매일 바뀌는 14장의 패를 보고 문제에 답해보자</p>
+            <div class="hand-row daily-hand-row" id="dailyHand" aria-label="오늘의 14장"></div>
+            <p class="daily-question" id="dailyQuestion"></p>
+            <div class="answer-grid daily-answer-grid" id="dailyAnswerGrid"></div>
+            <p class="feedback daily-feedback" id="dailyFeedback" role="status"></p>
           </article>
-
-          <section class="progress-card">
-            <div>
-              <span>진행률</span>
-              <strong id="progressText">0%</strong>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-          </section>
 
           <section class="quick-actions" aria-label="빠른 학습">
             <button class="action-card" data-view="tiles" type="button">
-              <span>萬</span>
-              <strong>패 익히기</strong>
-              <small>4종류만 먼저</small>
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <rect x="5" y="3" width="14" height="18" rx="2" />
+                  <path d="M9 8h6M9 12h6" />
+                  <circle cx="9" cy="16" r="1" fill="currentColor" stroke="none" />
+                  <circle cx="12" cy="16" r="1" fill="currentColor" stroke="none" />
+                  <circle cx="15" cy="16" r="1" fill="currentColor" stroke="none" />
+                </svg>
+              </span>
+              <strong>마작 패 소개</strong>
+              <small>패 이름과 종류를 알아보자</small>
+              <div class="part-progress part-progress--compact" data-part-progress="tiles"></div>
+            </button>
+            <button class="action-card" data-view="rules" type="button">
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
+              </span>
+              <strong>기본 규칙</strong>
+              <small>한 판 진행을 알아보자</small>
+              <div class="part-progress part-progress--compact" data-part-progress="rules"></div>
             </button>
             <button class="action-card" data-view="yaku" type="button">
-              <span>立</span>
-              <strong>역 단계</strong>
-              <small>묶어서 익히기</small>
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path
+                    d="M12 2l2.4 7.4H22l-6 4.6 2.3 7-6.3-4.6L6 21l2.3-7-6-4.6h7.6L12 2z"
+                  />
+                </svg>
+              </span>
+              <strong>심화 규칙</strong>
+              <small>역을 알아보자</small>
+              <div class="part-progress part-progress--compact" data-part-progress="yaku"></div>
             </button>
             <button class="action-card" data-view="quiz" type="button">
-              <span>✓</span>
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                  <circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="none" />
+                </svg>
+              </span>
               <strong>퀴즈</strong>
-              <small>바로 판단하기</small>
+              <small>손패를 보고 판단해 보자</small>
+              <div class="part-progress part-progress--compact" data-part-progress="quiz"></div>
             </button>
             <button class="action-card" data-view="score" type="button">
-              <span>点</span>
-              <strong>점수</strong>
-              <small>대략 감 잡기</small>
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <rect x="4" y="2" width="16" height="20" rx="2" />
+                  <path d="M8 6h8M8 10h2M12 10h2M16 10h2M8 14h2M12 14h2M16 14h2M8 18h8" />
+                </svg>
+              </span>
+              <strong>점수 계산기</strong>
+              <small>판수와 부수 감을 잡아보자</small>
+              <div class="part-progress part-progress--compact" data-part-progress="score"></div>
+            </button>
+            <button class="action-card" data-view="play" type="button">
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </span>
+              <strong>게임하기</strong>
+              <small>전국 마장을 찾아보자</small>
             </button>
           </section>
         </section>
 
-        <section class="view" id="tiles" aria-labelledby="viewTitle">
-          <div class="section-title">
-            <p class="eyebrow">패 익히기</p>
-            <h2>수패 3종, 자패 7종</h2>
+        <section class="view" id="rules" >
+          <div class="rules-list-panel" id="rulesListPanel">
+            <h1 class="view-page-title">기본 규칙</h1>
+            <div class="rule-unit-list" id="ruleUnitList"></div>
           </div>
+
+          <div class="rules-detail-panel" id="rulesDetailPanel" hidden>
+            <button class="rules-back-link" id="rulesBackLink" type="button">‹ 단원 목록</button>
+            <article class="detail-sheet rule-detail-sheet" id="ruleDetail"></article>
+          </div>
+        </section>
+
+        <section class="view" id="tiles" >
+          <h1 class="view-page-title">마작 패 소개</h1>
           <div class="tile-catalog" id="tileCatalog"></div>
         </section>
 
-        <section class="view" id="yaku" aria-labelledby="viewTitle">
-          <div class="section-title">
-            <p class="eyebrow">역 단계</p>
-            <h2>역을 묶어서 익히기</h2>
+        <section class="view" id="yaku" >
+          <div class="yaku-list-panel" id="yakuListPanel">
+            <h1 class="view-page-title">심화 규칙</h1>
+            <div class="rule-unit-list" id="yakuUnitList"></div>
           </div>
-          <div class="yaku-list" id="yakuList"></div>
-          <article class="detail-sheet" id="yakuDetail"></article>
+
+          <div class="yaku-detail-panel" id="yakuDetailPanel" hidden>
+            <button class="rules-back-link" id="yakuBackLink" type="button">‹ 단원 목록</button>
+            <article class="detail-sheet yaku-detail-sheet" id="yakuDetail"></article>
+          </div>
         </section>
 
-        <section class="view" id="quiz" aria-labelledby="viewTitle">
+        <section class="view" id="quiz" >
+          <div class="part-progress" data-part-progress="quiz" aria-label="퀴즈 진도"></div>
           <article class="quiz-card">
             <div class="quiz-status">
               <span id="quizCount">문제 1 / 4</span>
@@ -100,9 +160,18 @@
           </article>
         </section>
 
-        <section class="view" id="score" aria-labelledby="viewTitle">
+        <section class="view" id="play">
+          <h1 class="view-page-title">게임하기</h1>
+          <p class="play-lead">전국 마장 정보를 지역별로 모았습니다. 영업 시간·요금은 방문 전에 확인해 주세요.</p>
+          <div class="parlor-region-bar" id="parlorRegionBar" role="tablist" aria-label="지역 선택"></div>
+          <p class="parlor-count" id="parlorCount" aria-live="polite"></p>
+          <div class="parlor-list" id="parlorList"></div>
+          <p class="play-footnote">목록은 나무위키 「마장(마작)/대한민국」을 바탕으로 정리했습니다. 폐업·요금 변경이 있을 수 있으니 방문 전에 확인해 주세요. 수정·추가는 <code>parlors.js</code>에서 할 수 있습니다.</p>
+        </section>
+
+        <section class="view" id="score" >
           <article class="score-card">
-            <p class="eyebrow">점수 감각</p>
+            <p class="eyebrow">점수 계산기</p>
             <h2>판수와 부수만 바꿔보기</h2>
             <label>
               <span>판</span>
@@ -120,8 +189,10 @@
             <strong id="ronScore">2,000점</strong>
             <span>쯔모</span>
             <strong id="tsumoScore">1,000 / 500점</strong>
-            <p id="scoreNote">정확한 암산 전, 구간부터 익힙니다.</p>
+            <p id="scoreNote">친·자 구분, 본장, 도라 등은 추가로 더해집니다</p>
           </article>
+
+          <div class="score-guide-list" id="scoreGuides" aria-label="점수 참고"></div>
         </section>
 
         <p class="asset-credit">
@@ -129,30 +200,17 @@
         </p>
       </main>
 
-      <nav class="bottom-nav" aria-label="하단 메뉴">
-        <button class="nav-item active" data-view="dashboard" type="button">
-          <span>⌂</span>
-          홈
-        </button>
-        <button class="nav-item" data-view="tiles" type="button">
-          <span>🀇</span>
-          패
-        </button>
-        <button class="nav-item" data-view="yaku" type="button">
-          <span>立</span>
-          역
-        </button>
-        <button class="nav-item" data-view="quiz" type="button">
-          <span>✓</span>
-          퀴즈
-        </button>
-        <button class="nav-item" data-view="score" type="button">
-          <span>点</span>
-          점수
-        </button>
-      </nav>
+      <button class="floating-home-btn" id="floatingHomeBtn" type="button" aria-label="홈으로" hidden>
+        <span class="home-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <path d="M9 22V12h6v10" />
+          </svg>
+        </span>
+      </button>
     </div>
 
+    <script src="parlors.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
