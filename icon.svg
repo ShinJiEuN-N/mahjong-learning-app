@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="120" fill="#116b5b"/>
+  <g transform="translate(256,256)">
+    <!-- È‘( ¨‘ -->
+    <rect x="-80" y="-120" width="160" height="240" rx="16" fill="white" stroke="#116b5b" stroke-width="8"/>
+    <text x="0" y="30" font-size="120" font-weight="bold" fill="#116b5b" text-anchor="middle" font-family="sans-serif">\</text>
+  </g>
+</svg>
