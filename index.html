@@ -35,7 +35,7 @@
               </div>
               <span class="daily-date-badge" id="dailyDateBadge"></span>
             </div>
-            <p class="daily-quiz-lead" id="dailyQuizLead">매일 바뀌는 14장의 패를 보고 문제에 답해보자</p>
+            <p class="daily-quiz-lead" id="dailyQuizLead">오늘의 14장을 보고 가장 먼저 보이는 역 후보를 골라보자</p>
             <div class="hand-row daily-hand-row" id="dailyHand" aria-label="오늘의 14장"></div>
             <p class="daily-question" id="dailyQuestion"></p>
             <div class="answer-grid daily-answer-grid" id="dailyAnswerGrid"></div>
@@ -53,9 +53,8 @@
                   <circle cx="15" cy="16" r="1" fill="currentColor" stroke="none" />
                 </svg>
               </span>
-              <strong>마작 패 소개</strong>
-              <small>패 이름과 종류를 알아보자</small>
-              <div class="part-progress part-progress--compact" data-part-progress="tiles"></div>
+              <strong>패 익히기</strong>
+              <small>패 이름과 종류를 익혀보자</small>
             </button>
             <button class="action-card" data-view="rules" type="button">
               <span class="card-icon" aria-hidden="true">
@@ -65,7 +64,7 @@
                 </svg>
               </span>
               <strong>기본 규칙</strong>
-              <small>한 판 진행을 알아보자</small>
+              <small>한 판이 어떻게 흘러가는지 알아보자</small>
               <div class="part-progress part-progress--compact" data-part-progress="rules"></div>
             </button>
             <button class="action-card" data-view="yaku" type="button">
@@ -90,18 +89,24 @@
               </span>
               <strong>퀴즈</strong>
               <small>손패를 보고 판단해 보자</small>
-              <div class="part-progress part-progress--compact" data-part-progress="quiz"></div>
             </button>
             <button class="action-card" data-view="score" type="button">
               <span class="card-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
-                  <rect x="4" y="2" width="16" height="20" rx="2" />
-                  <path d="M8 6h8M8 10h2M12 10h2M16 10h2M8 14h2M12 14h2M16 14h2M8 18h8" />
+                  <rect x="5" y="2.5" width="14" height="19" rx="2.5" />
+                  <rect x="8" y="5.5" width="8" height="3.5" rx="0.8" />
+                  <rect x="8" y="11.5" width="2" height="2" rx="0.4" fill="currentColor" stroke="none" />
+                  <rect x="11" y="11.5" width="2" height="2" rx="0.4" fill="currentColor" stroke="none" />
+                  <rect x="14" y="11.5" width="2" height="2" rx="0.4" fill="currentColor" stroke="none" />
+                  <rect x="8" y="15" width="2" height="2" rx="0.4" fill="currentColor" stroke="none" />
+                  <rect x="11" y="15" width="2" height="2" rx="0.4" fill="currentColor" stroke="none" />
+                  <path d="M15 15v2M14 16h2" />
+                  <path d="M8 19h5" />
+                  <path d="M15 19h1" />
                 </svg>
               </span>
               <strong>점수 계산기</strong>
-              <small>판수와 부수 감을 잡아보자</small>
-              <div class="part-progress part-progress--compact" data-part-progress="score"></div>
+              <small>판수와 부수에 따른 점수를 확인해보자</small>
             </button>
             <button class="action-card" data-view="play" type="button">
               <span class="card-icon" aria-hidden="true">
@@ -110,7 +115,7 @@
                   <circle cx="12" cy="10" r="3" />
                 </svg>
               </span>
-              <strong>게임하기</strong>
+              <strong>마장 찾기</strong>
               <small>전국 마장을 찾아보자</small>
             </button>
           </section>
@@ -129,7 +134,7 @@
         </section>
 
         <section class="view" id="tiles" >
-          <h1 class="view-page-title">마작 패 소개</h1>
+          <h1 class="view-page-title">패 익히기</h1>
           <div class="tile-catalog" id="tileCatalog"></div>
         </section>
 
@@ -160,18 +165,32 @@
         </section>
 
         <section class="view" id="play">
-          <h1 class="view-page-title">게임하기</h1>
+          <h1 class="view-page-title">마장 찾기</h1>
           <p class="play-lead">전국 마장 정보를 지역별로 모았습니다. 영업 시간·요금은 방문 전에 확인해 주세요.</p>
+          <aside class="play-source-note" aria-label="마장 정보 출처">
+            <strong>정보 기준</strong>
+            <span>나무위키 「마장(마작)/대한민국」 2025년 기준. 방문 전 영업 여부와 요금을 다시 확인해 주세요.</span>
+          </aside>
           <div class="parlor-region-bar" id="parlorRegionBar" role="tablist" aria-label="지역 선택"></div>
           <p class="parlor-count" id="parlorCount" aria-live="polite"></p>
           <div class="parlor-list" id="parlorList"></div>
-          <p class="play-footnote">목록은 나무위키 「마장(마작)/대한민국」을 바탕으로 정리했습니다. 폐업·요금 변경이 있을 수 있으니 방문 전에 확인해 주세요. 수정·추가는 <code>parlors.js</code>에서 할 수 있습니다.</p>
+          <p class="play-footnote">수정·추가는 <code>parlors.js</code>에서 할 수 있습니다.</p>
         </section>
 
         <section class="view" id="score" >
           <article class="score-card">
             <p class="eyebrow">점수 계산기</p>
-            <h2>판수와 부수만 바꿔보기</h2>
+            <h2>판수와 부수로 점수 확인하기</h2>
+            <div class="score-mode-toggle" role="radiogroup" aria-label="화료한 사람">
+              <label>
+                <input type="radio" name="scoreMode" value="child" checked />
+                <span>자</span>
+              </label>
+              <label>
+                <input type="radio" name="scoreMode" value="dealer" />
+                <span>친</span>
+              </label>
+            </div>
             <label>
               <span>판</span>
               <input id="hanInput" type="range" min="1" max="6" value="2" />
@@ -184,11 +203,11 @@
             </label>
           </article>
           <article class="score-result" aria-live="polite">
-            <span>론</span>
+            <span id="ronLabel">자 론</span>
             <strong id="ronScore">2,000점</strong>
-            <span>쯔모</span>
+            <span id="tsumoLabel">자 쯔모(친 / 자)</span>
             <strong id="tsumoScore">1,000 / 500점</strong>
-            <p id="scoreNote">친·자 구분, 본장, 도라 등은 추가로 더해집니다</p>
+            <p id="scoreNote">본장·도라 등은 별도로 더해집니다.</p>
           </article>
 
           <div class="score-guide-list" id="scoreGuides" aria-label="점수 참고"></div>

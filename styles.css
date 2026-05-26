@@ -690,6 +690,48 @@ a:active {
   accent-color: var(--primary);
 }
 
+.score-mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.score-mode-toggle label {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 38px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.score-mode-toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.score-mode-toggle span {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 34px;
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.score-mode-toggle input:checked + span {
+  color: white;
+  background: var(--primary);
+}
+
 .score-result {
   display: grid;
   gap: 8px;
@@ -770,6 +812,24 @@ a:active {
 
 .play-footnote code {
   font-size: 0.85em;
+}
+
+.play-source-note {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--muted);
+  background: var(--surface-2);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.play-source-note strong {
+  color: var(--primary-dark);
+  font-size: 0.8rem;
 }
 
 .parlor-region-bar {

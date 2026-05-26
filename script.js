@@ -1,11 +1,11 @@
 const views = {
   dashboard: "오늘 학습",
   rules: "기본 규칙",
-  tiles: "마작 패 소개",
+  tiles: "패 익히기",
   yaku: "심화 규칙",
   quiz: "퀴즈",
   score: "점수 계산기",
-  play: "게임하기",
+  play: "마장 찾기",
 };
 
 let activeParlorRegion = "all";
@@ -19,7 +19,7 @@ const seatTerms = [
     reading: "오야 / dealer",
     short: "이번 국의 기준이 되는 사람",
     description:
-      "친은 해당 국에서 점수가 더 크게 오가고, 친이 화료하거나 텐파이 유국하면 같은 친으로 연장될 수 있습니다.",
+      "친은 해당 국에서 점수가 더 크게 오갑니다. 친이 화료하거나 유국 때 텐파이이면 같은 친으로 한 판 더 진행합니다.",
   },
   {
     name: "자",
@@ -30,13 +30,13 @@ const seatTerms = [
   {
     name: "상가",
     reading: "카미차",
-    short: "나보다 먼저 도는 사람",
-    description: "보통 내 왼쪽에 있습니다. 치는 상가가 버린 패로만 슌쯔를 만들 수 있습니다.",
+    short: "내 바로 전 차례의 사람",
+    description: "보통 내 왼쪽에 있습니다. 치는 상가가 버린 패로만 할 수 있습니다.",
   },
   {
     name: "하가",
     reading: "시모차",
-    short: "나보다 나중에 도는 사람",
+    short: "내 바로 다음 차례의 사람",
     description: "보통 내 오른쪽에 있습니다. 내가 패를 버린 뒤 바로 다음 차례입니다.",
   },
   {
@@ -50,7 +50,7 @@ const seatTerms = [
 const ruleSteps = [
   {
     title: "마작의 목표",
-    summary: "패 14장으로 완성형을 만들고 화료합니다.",
+    summary: "14장의 패로 완성형을 만들고 화료합니다.",
     detail:
       "대부분의 손패는 몸통 4개와 머리 1개로 완성됩니다. 단, 리치마작에서는 완성형만으로는 부족하고 최소 1개의 역이 필요합니다.",
     tiles: ["m2", "m3", "m4", "p5", "p6", "p7", "s6", "s7", "s8", "z5", "z5"],
@@ -74,15 +74,15 @@ const ruleSteps = [
   },
   {
     title: "남의 패를 가져오기",
-    summary: "치, 퐁, 깡, 론 — 동시에 가능하면 우선순위가 있습니다.",
+    summary: "치, 퐁, 깡, 론은 동시에 가능할 때 우선순위가 있습니다.",
     detail:
-      "치는 상가 버림패로만 슌쯔를 만듭니다. 퐁·깡은 누구 패든 쓸 수 있고, 론은 버림패로 화료합니다. 동시에 가능하면 론 > 퐁·깡 > 치 순입니다.",
+      "치는 상가가 버린 패로만 슌쯔를 만듭니다. 퐁·깡은 누구의 버림패로도 할 수 있고, 론은 버림패로 화료합니다. 동시에 가능하면 론 > 퐁·깡 > 치 순입니다.",
     tiles: ["p3", "p4", "p5", "z7", "z7", "z7"],
     chips: ["론 우선", "치=상가만", "퐁·깡"],
   },
   {
     title: "후로",
-    summary: "치·퐁·깡으로 연 몸통은 열린(후로) 상태입니다.",
+    summary: "치·퐁·열린 깡으로 만든 몸통은 후로 상태입니다.",
     detail:
       "후로를 하면 멘젠이 깨집니다. 리치·핑후·이페코처럼 멘젠 전용 역은 불가능해지고, 또이또이처럼 후로에서도 되는 역은 판수가 줄어드는 경우가 많습니다.",
     tiles: ["m3", "m3", "m3", "p4", "p5", "p6", "s7", "s8", "s9"],
@@ -100,7 +100,7 @@ const ruleSteps = [
     title: "멘젠",
     summary: "치, 퐁, 열린 깡을 하지 않은 상태입니다.",
     detail:
-      "남의 패로 연 몸통(밍커)이 없어야 합니다. 안커·안깡만 있으면 멘젠이 유지됩니다. 리치, 핑후, 이페코, 멘젠쯔모는 멘젠이 전제입니다.",
+      "남의 패로 공개한 몸통(밍커)이 없어야 합니다. 안커·안깡만 있으면 멘젠이 유지됩니다. 리치, 핑후, 이페코, 멘젠쯔모는 멘젠이 전제입니다.",
     tiles: ["m3", "m4", "m5", "p6", "p7", "p8", "s2", "s3", "s4"],
     chips: ["멘젠", "안커 OK", "밍커 NO"],
   },
@@ -134,7 +134,7 @@ const basicTerms = [
   {
     name: "본장",
     description:
-      "친이 텐파이 유국·화료하면 이어지고(+1), 친 노텐 유국도 +1. 자가 화료하면 0본장부터. 1본장마다 화료 점수 +300점입니다.",
+      "친이 화료하거나 유국 때 텐파이이면 본장이 1개 늘어납니다. 자가 화료하면 0본장으로 돌아가며, 1본장마다 화료 점수에 300점이 더해집니다.",
   },
   {
     name: "호출 우선순위",
@@ -146,15 +146,15 @@ const basicTerms = [
   },
   {
     name: "일발",
-    description: "리치 후 치·퐁·깡 없이 화료하면 +1판. 누군가 호출하면 성립하지 않습니다.",
+    description: "리치 후 아무도 치·퐁·깡을 하지 않은 상태에서 바로 화료하면 붙는 1판 역입니다.",
   },
   {
     name: "동풍전",
-    description: "동·남·서·북 순으로 친이 바뀌는 4국 묶음입니다. 온라인에서는 보통 1전(4국)으로 끝냅니다.",
+    description: "동장만 진행하는 짧은 경기 방식입니다. 보통 동1국부터 동4국까지 진행합니다.",
   },
   {
     name: "국",
-    description: "한 명이 친이 되어 네 사람이 한 바퀴 도는 단위입니다. 동국·남국·서국·북국이 있습니다.",
+    description: "친 한 명을 기준으로 진행되는 한 판입니다. 예를 들어 동1국, 남2국처럼 부릅니다.",
   },
   {
     name: "텐파이",
@@ -162,7 +162,7 @@ const basicTerms = [
   },
   {
     name: "유국",
-    description: "아무도 화료하지 못하고 판이 끝나는 것입니다. 텐파이 여부에 따라 점수가 오갑니다.",
+    description: "아무도 화료하지 못하고 한 판이 끝나는 상황입니다. 텐파이 여부에 따라 점수가 오갑니다.",
   },
   {
     name: "후로",
@@ -170,15 +170,19 @@ const basicTerms = [
   },
   {
     name: "노텐",
-    description: "유국 때 텐파이가 아니면 벌점을 냅니다. 리치·멘젠 텐파이 상태는 노텐 벌점 대상이 아닙니다.",
+    description: "유국 때 텐파이면 점수를 받고, 노텐이면 벌점을 냅니다. 멘젠 여부와는 관계없습니다.",
+  },
+  {
+    name: "후리텐",
+    description: "내가 버린 적 있는 패로는 론할 수 없습니다. 쯔모 화료는 가능합니다.",
   },
   {
     name: "표시도라",
     description: "도라 표시패 다음 패가 도라입니다. 화료 시 손패·후로에 있는 도라 1장마다 +1판(도라)이 붙습니다.",
   },
   {
-    name: "里도라",
-    description: "리치 막대 아래를 뒤집어 추가 도라를 확인합니다. 표시도라와 합쳐 점수가 올라갑니다.",
+    name: "우라도라",
+    description: "리치로 화료했을 때 도라 표시패 아래의 숨은 표시패를 공개합니다. 그 표시패의 다음 순서 패가 우라도라입니다.",
   },
   {
     name: "쿠이탕",
@@ -190,20 +194,26 @@ const ruleTipCards = [
   {
     eyebrow: "리치",
     title: "멘젠 텐파이 선언",
-    body: "멘젠 텐파이에서 1,000점을 공탁하고 선언합니다. 선언 버림패는 가로로 둡니다. 리치 자체가 1판 역이며, 里도라를 공개할 수 있습니다.",
-    chips: ["1,000점 공탁", "里도라", "가로 버림"],
+    body: "멘젠 텐파이에서 1,000점을 공탁하고 선언합니다. 선언 버림패는 가로로 둡니다. 리치 자체가 1판 역이며, 화료하면 우라도라를 확인할 수 있습니다.",
+    chips: ["1,000점 공탁", "우라도라", "가로 버림"],
   },
   {
     eyebrow: "리치 조건",
     title: "선언 · 제한",
-    body: "남은 쯔모패가 4장 이상일 때만 선언할 수 있습니다. 보유 점수가 1,000점 미만이면 불가하며, 선언 후에는 손패를 바꿀 수 없습니다. 4명 모두 리치하면 유국됩니다.",
-    chips: ["남은 패 4장+", "1,000점 이상", "4리치 유국"],
+    body: "남은 쯔모패가 4장 이상일 때만 선언할 수 있습니다. 보유 점수가 1,000점 미만이면 불가하며, 선언 후에는 원칙적으로 손패를 바꿀 수 없습니다. 일부 룰에서는 4명 모두 리치하면 유국될 수 있습니다.",
+    chips: ["남은 패 4장+", "1,000점 이상", "일부 룰 4리치 유국"],
   },
   {
     eyebrow: "노텐",
     title: "유국 때 텐파이 벌점",
-    body: "유국 시 텐파이가 아니면 노텐 벌점을 냅니다. 리치·멘젠 텐파이는 노텐 벌점을 내지 않습니다.",
+    body: "유국 시 텐파이면 점수를 받고, 노텐이면 벌점을 냅니다. 멘젠 여부와는 관계없고, 이미 리치했다면 텐파이 상태로 봅니다.",
     chips: ["유국", "텐파이", "벌점"],
+  },
+  {
+    eyebrow: "후리텐",
+    title: "내가 버린 패로는 론 불가",
+    body: "내 버림패에 포함된 패로는 론할 수 없습니다. 같은 대기 안에 내가 버린 패가 섞여 있어도 후리텐이 되며, 이때는 쯔모로만 화료할 수 있습니다.",
+    chips: ["론 불가", "쯔모 가능", "버림패 확인"],
   },
 ];
 
@@ -232,7 +242,7 @@ const ruleUnits = [
     step: "1단원",
     title: "작탁 자리",
     short: "상가·하가·대면·친·자",
-    intro: "나보다 먼저 도는 사람이 상가(보통 왼쪽), 나중에 도는 사람이 하가(보통 오른쪽), 맞은편이 대면입니다. 장풍은 반시계(동→남→서→북)로 바뀝니다.",
+    intro: "내 바로 전 차례가 상가(보통 왼쪽), 바로 다음 차례가 하가(보통 오른쪽), 맞은편이 대면입니다. 장풍은 동→남→서→북 순서로 바뀝니다.",
   },
   {
     id: "flow",
@@ -244,15 +254,15 @@ const ruleUnits = [
   {
     id: "riichi",
     step: "3단원",
-    title: "리치 · 노텐",
-    short: "선언 조건과 벌점",
-    intro: "멘젠 텐파이에서 리치를 걸고, 유국 시 텐파이 여부에 따라 점수가 오갑니다.",
+    title: "리치 · 노텐 · 후리텐",
+    short: "선언 조건·벌점·론 제한",
+    intro: "멘젠 텐파이에서 리치를 걸 수 있고, 유국 시에는 텐파이 여부에 따라 점수가 오갑니다. 후리텐이면 론할 수 없으므로 버림패도 함께 확인해야 합니다.",
   },
   {
     id: "dora",
     step: "4단원",
     title: "도라",
-    short: "표시도라 · 里도라",
+    short: "표시도라 · 우라도라",
     intro: doraGuide.body,
   },
   {
@@ -285,28 +295,28 @@ const waitGuide = {
     { name: "② 슌쯔만", short: "모든 몸통이 연속 숫자 3장(커쯔 없음)." },
     { name: "③ 양면 대기", short: "들어오는 패가 연속 숫자의 앞·뒤 양쪽." },
     { name: "④ 머리", short: "머리가 역패(자풍·장풍·삼원)가 아님." },
-    { name: "단면 대기", short: "한 패만 기다리면 핑후가 되기 어렵습니다." },
+    { name: "간짱·변짱·단기", short: "가운데·끝·머리 대기는 핑후가 되지 않습니다." },
   ],
 };
 
 const scoreGuides = [
   {
     eyebrow: "친 · 자",
-    title: "같은 점수라도 받는 사람이 다릅니다",
-    body: "기본점 = 부 × 2^(판+2) (최대 2000). 친 론은 ×6, 친 쯔모은 자 3명에게 ×2씩, 자 론은 ×4, 자 쯔모은 친 ×2·자 ×1씩 받습니다.",
-    chips: ["친 론 ×6", "자 론 ×4", "쯔모 분담"],
+    title: "친과 자를 나누어 계산합니다",
+    body: "자 론은 기본점 ×4, 친 론은 ×6입니다. 자 쯔모는 친에게 ×2·다른 자에게 ×1씩 받고, 친 쯔모는 세 명에게 ×2씩 받습니다.",
+    chips: ["자 론 ×4", "친 론 ×6", "쯔모 분담"],
   },
   {
     eyebrow: "본장 · 만관",
     title: "본장과 고정 점수",
-    body: "1본장마다 화료 시 +300점(쯔모는 각 자가 +100). 기본점이 2,000점에 닿으면 만관(8,000점)부터 계산합니다.",
+    body: "1본장마다 화료 점수에 300점이 더해집니다(쯔모는 각자 100점씩). 기본점이 2,000점에 닿으면 만관(8,000점)부터 계산합니다.",
     chips: ["본장 +300", "만관 8000", "하네만 12000"],
   },
   {
     eyebrow: "도라",
-    title: "표시도라와 里도라",
-    body: "도라는 보너스 판이지 역이 아닙니다. 표시도라는 산 표시 기준, 里도라는 리치 후 막대에서 추가로 확인합니다.",
-    chips: ["역 아님", "표시도라", "里도라", "적도라 +1판"],
+    title: "표시도라와 우라도라",
+    body: "도라는 점수를 올려주는 보너스 판이지만 역은 아닙니다. 도라 표시패 자체가 도라가 아니라, 그 다음 순서의 패가 도라입니다. 우라도라는 리치로 화료했을 때 숨은 표시패를 공개해 같은 방식으로 확인합니다.",
+    chips: ["역 아님", "표시패 다음", "우라도라", "적도라 +1판"],
   },
 ];
 
@@ -535,6 +545,7 @@ const DAILY_HAND_SETS = [
 const PROGRESS_KEY = "jaktakPartProgress";
 const LEGACY_STORAGE_KEY = "jaktakCompletedViews";
 const DAILY_QUIZ_KEY = "jaktakDailyQuiz";
+const DAILY_QUIZ_VERSION = 2;
 const TILE_IMAGE_BASE_URL = "https://commons.wikimedia.org/wiki/Special:Redirect/file/";
 
 const tileGroups = [
@@ -576,7 +587,7 @@ const yakuCategories = [
     title: "역이란?",
     short: "완성만으로는 화료 불가",
     intro:
-      "리치마작에서는 손패 모양을 완성하는 것만으로는 화료할 수 없습니다. 최소 1개의 역이 있어야 론이나 쯔모로 날 수 있습니다.",
+      "리치마작에서는 손패 모양을 완성하는 것만으로는 화료할 수 없습니다. 최소 1개의 역이 있어야 론이나 쯔모로 화료할 수 있습니다.",
     kind: "intro",
     chips: ["역 1개 이상 필요", "도라만으로는 불가", "멘젠 조건 주의", "리치+일발"],
   },
@@ -625,7 +636,7 @@ const yakuCategories = [
         closedOnly: true,
         open: "멘젠 전용",
         rule: "모든 몸통이 슌쯔이고, 머리가 역패가 아니며, 양면 대기인 형태입니다.",
-        tip: "‘슌쯔 4개 + 평범한 머리 + 양면 대기’로 먼저 감을 잡으면 됩니다.",
+        tip: "먼저 ‘슌쯔 4개 + 역패가 아닌 머리 + 양면 대기’로 기억하면 됩니다.",
         tiles: ["m2", "m3", "m4", "p3", "p4", "p5", "s6", "s7", "s8", "z2", "z2"],
       },
       {
@@ -669,7 +680,7 @@ const yakuCategories = [
         closedOnly: false,
         open: "후로 가능",
         rule: "커쯔 4개와 머리로 이루어진 손패입니다.",
-        tip: "퐁을 많이 받은 손이라면 가장 먼저 의심해볼 역입니다.",
+        tip: "퐁을 많이 한 손이라면 가장 먼저 확인해볼 역입니다.",
         tiles: ["m3", "m3", "m3", "p7", "p7", "p7", "s2", "s2", "s2", "z6", "z6"],
       },
       {
@@ -713,7 +724,7 @@ const yakuCategories = [
         closedOnly: false,
         open: "후로 시 1판 감소",
         rule: "한 종류 수패만 사용하고 자패는 쓰지 않습니다.",
-        tip: "혼일색보다 조건이 빡세지만 훨씬 높은 타점입니다.",
+        tip: "혼일색보다 조건은 어렵지만 훨씬 높은 타점을 기대할 수 있습니다.",
         tiles: ["p1", "p2", "p3", "p3", "p4", "p5", "p5", "p6", "p7", "p8", "p8"],
       },
       {
@@ -736,6 +747,76 @@ const yakuCategories = [
       },
     ],
   },
+  {
+    step: "외전",
+    title: "추가 모양역",
+    short: "끝패·커쯔·삼원패 패턴",
+    intro: "처음부터 외울 필요는 없지만, 실전에서 이름을 자주 듣는 모양역입니다. 끝패, 커쯔, 삼원패가 강하게 보일 때 확인합니다.",
+    items: [
+      {
+        name: "찬타",
+        han: "2판 / 후로 1판",
+        closedOnly: false,
+        open: "후로 시 1판 감소",
+        rule: "모든 몸통과 머리에 1·9 수패 또는 자패가 포함됩니다.",
+        tip: "끝패와 자패가 계속 남는 손이면 탕야오와 반대 방향으로 확인합니다.",
+        tiles: ["m1", "m2", "m3", "p7", "p8", "p9", "s1", "s1", "s1", "z5", "z5"],
+      },
+      {
+        name: "준찬타",
+        han: "3판 / 후로 2판",
+        closedOnly: false,
+        open: "후로 시 1판 감소",
+        rule: "모든 몸통과 머리에 1·9 수패가 포함되고, 자패는 쓰지 않습니다.",
+        tip: "찬타보다 조건이 좁습니다. 자패가 빠지고 끝패 중심으로만 구성됩니다.",
+        tiles: ["m1", "m2", "m3", "p7", "p8", "p9", "s1", "s1", "s1", "m9", "m9"],
+      },
+      {
+        name: "산안커",
+        han: "2판",
+        closedOnly: false,
+        open: "조건부",
+        rule: "남의 패를 쓰지 않은 안커 3개를 만듭니다.",
+        tip: "퐁한 커쯔는 안커가 아닙니다. 론으로 완성한 커쯔도 안커로 보지 않는 점을 조심합니다.",
+        tiles: ["m2", "m2", "m2", "p5", "p5", "p5", "s8", "s8", "s8", "z5", "z5"],
+      },
+      {
+        name: "소삼원",
+        han: "2판 + 역패",
+        closedOnly: false,
+        open: "후로 가능",
+        rule: "백·발·중 중 2종을 커쯔로, 나머지 1종을 머리로 만듭니다.",
+        tip: "삼원패 커쯔 2개가 각각 역패라서 실제 점수는 보통 함께 커집니다.",
+        tiles: ["z5", "z5", "z5", "z6", "z6", "z6", "z7", "z7", "m2", "m3", "m4"],
+      },
+    ],
+  },
+  {
+    step: "외전",
+    title: "상황역",
+    short: "마지막 패와 깡에서 붙는 역",
+    intro: "손패 모양만으로 정해지는 역이 아니라, 어떤 상황에서 화료했는지가 조건이 되는 역입니다. 자주 나오진 않지만 이름을 알아두면 좋습니다.",
+    items: [
+      {
+        name: "하이테이·호테이",
+        han: "1판",
+        closedOnly: false,
+        open: "후로 가능",
+        rule: "마지막 쯔모패로 화료하면 하이테이, 마지막 버림패로 론하면 호테이입니다.",
+        tip: "손패 모양보다 '마지막 패인가'가 핵심인 상황역입니다.",
+        tiles: ["m2", "m3", "m4", "p5", "p6", "p7", "s7", "s8", "s9", "z5", "z5"],
+      },
+      {
+        name: "영상개화·창깡",
+        han: "1판",
+        closedOnly: false,
+        open: "후로 가능",
+        rule: "깡 뒤 보충패로 화료하면 영상개화, 남의 깡 선언 패로 론하면 창깡입니다.",
+        tip: "둘 다 깡과 연결된 상황역입니다. 자주 나오진 않지만 이름을 알아두면 좋습니다.",
+        tiles: ["m4", "m4", "m4", "m4", "p2", "p3", "p4", "s6", "s7", "s8", "z7", "z7"],
+      },
+    ],
+  },
 ];
 
 const quizzes = [
@@ -743,9 +824,9 @@ const quizzes = [
     type: "rule",
     question: "상가에 대한 설명으로 맞는 것은?",
     tiles: [],
-    answers: ["나보다 먼저 도는 사람", "나보다 나중에 도는 사람", "내 맞은편 사람", "이번 국의 친"],
+    answers: ["내 바로 전 차례의 사람", "내 바로 다음 차례의 사람", "내 맞은편 사람", "이번 국의 친"],
     correct: 0,
-    explanation: "상가는 나보다 먼저 차례가 오는 사람이며, 보통 왼쪽에 있습니다.",
+    explanation: "상가는 내 바로 전 차례의 사람이며, 보통 왼쪽에 있습니다.",
   },
   {
     type: "rule",
@@ -862,6 +943,22 @@ const quizzes = [
   },
   {
     type: "rule",
+    question: "후리텐 상태에서 할 수 없는 화료는?",
+    tiles: [],
+    answers: ["론", "쯔모", "리치", "텐파이"],
+    correct: 0,
+    explanation: "후리텐이면 론할 수 없습니다. 대신 쯔모 화료는 가능합니다.",
+  },
+  {
+    type: "rule",
+    question: "내 버림패에 있는 패로 대기하고 있다면?",
+    tiles: ["m3", "m4", "m5"],
+    answers: ["후리텐이 될 수 있다", "항상 역패가 된다", "도라가 사라진다", "멘젠이 깨진다"],
+    correct: 0,
+    explanation: "내가 버린 적 있는 패가 대기에 포함되면 후리텐이 되어 론할 수 없습니다.",
+  },
+  {
+    type: "rule",
     question: "동시에 호출할 수 있을 때 우선순위는?",
     tiles: [],
     answers: ["론 > 퐁·깡 > 치", "치 > 퐁 > 론", "깡 > 치 > 론", "퐁 > 론 > 치"],
@@ -882,7 +979,7 @@ const quizzes = [
     tiles: ["m2", "m3"],
     answers: ["상가만", "누구나", "하가만", "대면만"],
     correct: 0,
-    explanation: "치는 나보다 먼저 도는 상가의 버림패로만 슌쯔를 만들 수 있습니다.",
+    explanation: "치는 상가가 버린 패로만 슌쯔를 만들 수 있습니다.",
   },
   {
     type: "yaku",
@@ -916,6 +1013,14 @@ let quizScore = 0;
 let answered = false;
 let dailyAnswered = false;
 let progress = readProgress();
+
+const partTotals = {
+  rules: () => ruleUnits.length,
+  tiles: () => 1,
+  yaku: () => yakuCategories.length,
+  quiz: () => quizzes.length,
+  score: () => 1,
+};
 
 function defaultProgress() {
   return {
@@ -1089,6 +1194,321 @@ function countYakuhaiTiles(tiles) {
   return (Array.isArray(tiles) ? tiles : []).filter(isYakuhaiTile).length;
 }
 
+const DAILY_YAKU_OPTIONS = [
+  "탕야오",
+  "역패",
+  "역패 후보",
+  "치또이츠",
+  "또이또이",
+  "핑후 후보",
+  "이페코",
+  "삼색동순",
+  "일기통관",
+  "혼일색",
+  "청일색",
+  "혼노두",
+  "찬타",
+  "준찬타",
+  "산안커",
+  "소삼원",
+  "국사무쌍 후보",
+  "뚜렷한 역 없음",
+];
+
+function tileKey(tileCode) {
+  const tile = parseTileCode(tileCode);
+  if (!tile) return "";
+  return `${tile.suitKey}${tile.value}`;
+}
+
+function countTileKeys(tiles) {
+  const counts = {};
+  (Array.isArray(tiles) ? tiles : []).forEach((tileCode) => {
+    const key = tileKey(tileCode);
+    if (key) counts[key] = (counts[key] || 0) + 1;
+  });
+  return counts;
+}
+
+function cloneCounts(counts) {
+  return Object.fromEntries(Object.entries(counts).filter(([, count]) => count > 0));
+}
+
+function removeTileCount(counts, key, amount) {
+  if ((counts[key] || 0) < amount) return false;
+  counts[key] -= amount;
+  if (counts[key] === 0) delete counts[key];
+  return true;
+}
+
+function getFirstCountKey(counts) {
+  return Object.keys(counts).sort((a, b) => {
+    const suitOrder = "mpsz";
+    const suitDiff = suitOrder.indexOf(a[0]) - suitOrder.indexOf(b[0]);
+    return suitDiff || Number(a.slice(1)) - Number(b.slice(1));
+  })[0];
+}
+
+function findMeldDecompositions(counts, melds = [], limit = 12) {
+  const firstKey = getFirstCountKey(counts);
+  if (!firstKey) return [melds];
+  if (melds.length >= 4) return [];
+
+  const results = [];
+  const tripletCounts = cloneCounts(counts);
+  if (removeTileCount(tripletCounts, firstKey, 3)) {
+    results.push(...findMeldDecompositions(tripletCounts, [...melds, { type: "triplet", keys: [firstKey, firstKey, firstKey] }], limit));
+  }
+
+  const suit = firstKey[0];
+  const value = Number(firstKey.slice(1));
+  if (suit !== "z" && value <= 7) {
+    const secondKey = `${suit}${value + 1}`;
+    const thirdKey = `${suit}${value + 2}`;
+    const sequenceCounts = cloneCounts(counts);
+    if (
+      removeTileCount(sequenceCounts, firstKey, 1) &&
+      removeTileCount(sequenceCounts, secondKey, 1) &&
+      removeTileCount(sequenceCounts, thirdKey, 1)
+    ) {
+      results.push(
+        ...findMeldDecompositions(
+          sequenceCounts,
+          [...melds, { type: "sequence", keys: [firstKey, secondKey, thirdKey] }],
+          limit,
+        ),
+      );
+    }
+  }
+
+  return results.slice(0, limit);
+}
+
+function getStandardHandDivisions(tiles) {
+  const counts = countTileKeys(tiles);
+  const divisions = [];
+  Object.entries(counts).forEach(([key, count]) => {
+    if (count < 2) return;
+    const rest = cloneCounts(counts);
+    removeTileCount(rest, key, 2);
+    findMeldDecompositions(rest).forEach((melds) => {
+      if (melds.length === 4) divisions.push({ pair: key, melds });
+    });
+  });
+  return divisions;
+}
+
+function isTerminalOrHonorKey(key) {
+  if (key[0] === "z") return true;
+  const value = Number(key.slice(1));
+  return value === 1 || value === 9;
+}
+
+function hasDragonTriplet(counts) {
+  return ["z5", "z6", "z7"].some((key) => (counts[key] || 0) >= 3);
+}
+
+function hasWindTriplet(counts) {
+  return ["z1", "z2", "z3", "z4"].some((key) => (counts[key] || 0) >= 3);
+}
+
+function hasIipeiko(division) {
+  const sequenceCounts = {};
+  division.melds
+    .filter((meld) => meld.type === "sequence")
+    .forEach((meld) => {
+      const id = meld.keys.join("-");
+      sequenceCounts[id] = (sequenceCounts[id] || 0) + 1;
+    });
+  return Object.values(sequenceCounts).some((count) => count >= 2);
+}
+
+function hasSanshoku(division) {
+  const startsByNumber = {};
+  division.melds
+    .filter((meld) => meld.type === "sequence")
+    .forEach((meld) => {
+      const start = Number(meld.keys[0].slice(1));
+      startsByNumber[start] = startsByNumber[start] || new Set();
+      startsByNumber[start].add(meld.keys[0][0]);
+    });
+  return Object.values(startsByNumber).some((suits) => ["m", "p", "s"].every((suit) => suits.has(suit)));
+}
+
+function hasIttsuu(division) {
+  return ["m", "p", "s"].some((suit) => {
+    const starts = new Set(
+      division.melds
+        .filter((meld) => meld.type === "sequence" && meld.keys[0][0] === suit)
+        .map((meld) => Number(meld.keys[0].slice(1))),
+    );
+    return [1, 4, 7].every((start) => starts.has(start));
+  });
+}
+
+function isPinfuCandidate(division) {
+  return (
+    division.melds.every((meld) => meld.type === "sequence") &&
+    !["z1", "z2", "z3", "z4", "z5", "z6", "z7"].includes(division.pair)
+  );
+}
+
+function meldHasTerminalOrHonor(meld) {
+  return meld.keys.some(isTerminalOrHonorKey);
+}
+
+function meldHasTerminal(meld) {
+  return meld.keys.some((key) => key[0] !== "z" && isTerminalOrHonorKey(key));
+}
+
+function hasChanta(division) {
+  return isTerminalOrHonorKey(division.pair) && division.melds.every(meldHasTerminalOrHonor);
+}
+
+function hasJunchan(division) {
+  return (
+    division.pair[0] !== "z" &&
+    isTerminalOrHonorKey(division.pair) &&
+    division.melds.every((meld) => meld.keys.every((key) => key[0] !== "z") && meldHasTerminal(meld))
+  );
+}
+
+function hasSanankouShape(division) {
+  return division.melds.filter((meld) => meld.type === "triplet").length >= 3;
+}
+
+function hasShousangen(counts) {
+  const dragonCounts = ["z5", "z6", "z7"].map((key) => counts[key] || 0);
+  const triplets = dragonCounts.filter((count) => count >= 3).length;
+  const pairs = dragonCounts.filter((count) => count >= 2).length;
+  return triplets >= 2 && pairs >= 3;
+}
+
+function analyzeHandYaku(tiles) {
+  const counts = countTileKeys(tiles);
+  const keys = Object.keys(counts);
+  const suitedKeys = keys.filter((key) => key[0] !== "z");
+  const suits = new Set(suitedKeys.map((key) => key[0]));
+  const hasHonors = keys.some((key) => key[0] === "z");
+  const divisions = getStandardHandDivisions(tiles);
+  const pairCount = Object.values(counts).filter((count) => count === 2).length;
+  const uniqueTerminalHonors = keys.filter(isTerminalOrHonorKey).length;
+  const hasTerminalHonorPair = keys.some((key) => isTerminalOrHonorKey(key) && (counts[key] || 0) >= 2);
+  const yaku = [];
+
+  if (keys.length === 7 && pairCount === 7) yaku.push("치또이츠");
+  if (uniqueTerminalHonors >= 13 && hasTerminalHonorPair) yaku.push("국사무쌍 후보");
+  if (keys.every((key) => !isTerminalOrHonorKey(key))) yaku.push("탕야오");
+  if (hasDragonTriplet(counts)) yaku.push("역패");
+  if (hasWindTriplet(counts)) yaku.push("역패 후보");
+  if (hasShousangen(counts)) yaku.push("소삼원");
+  if (keys.length > 0 && keys.every(isTerminalOrHonorKey)) yaku.push("혼노두");
+
+  if (suitedKeys.length > 0 && suits.size === 1) {
+    yaku.push(hasHonors ? "혼일색" : "청일색");
+  }
+
+  if (divisions.some((division) => division.melds.every((meld) => meld.type === "triplet"))) yaku.push("또이또이");
+  if (divisions.some(hasIipeiko)) yaku.push("이페코");
+  if (divisions.some(hasSanshoku)) yaku.push("삼색동순");
+  if (divisions.some(hasIttsuu)) yaku.push("일기통관");
+  if (divisions.some(isPinfuCandidate)) yaku.push("핑후 후보");
+  if (divisions.some(hasSanankouShape)) yaku.push("산안커");
+  if (divisions.some(hasJunchan)) yaku.push("준찬타");
+  else if (divisions.some(hasChanta)) yaku.push("찬타");
+
+  const uniqueYaku = [...new Set(yaku)];
+  return {
+    yaku: uniqueYaku,
+    divisions,
+    explanation: buildDailyYakuExplanation(uniqueYaku),
+  };
+}
+
+function formatYakuList(yakuNames) {
+  if (yakuNames.length <= 1) return yakuNames[0] || "";
+  if (yakuNames.length === 2) return `${yakuNames[0]}와 ${yakuNames[1]}`;
+  return `${yakuNames.slice(0, -1).join(", ")}와 ${yakuNames.at(-1)}`;
+}
+
+function buildDailyYakuExplanation(yakuNames) {
+  if (yakuNames.length === 0) {
+    return "손패만 봤을 때 바로 보이는 입문 역은 아직 뚜렷하지 않습니다. 리치나 쯔모처럼 상황이 필요한 역은 여기서는 제외합니다.";
+  }
+
+  if (yakuNames.length === 1) {
+    return `이 손패에서는 ${yakuNames[0]}를 먼저 확인할 수 있습니다.`;
+  }
+
+  return `이 손패에서는 ${formatYakuList(yakuNames)}를 함께 확인할 수 있습니다. 보기 중 해당하는 선택지는 모두 정답입니다.`;
+}
+
+function seededShuffle(items, seed = 0) {
+  const shuffled = [...items];
+  let n = seed;
+  const next = () => {
+    n = (n * 1664525 + 1013904223) >>> 0;
+    return n;
+  };
+
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+    const j = next() % (i + 1);
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
+}
+
+function pickDailyYakuAnswer(analysis) {
+  const priority = [
+    "국사무쌍 후보",
+    "치또이츠",
+    "청일색",
+    "혼일색",
+    "소삼원",
+    "준찬타",
+    "찬타",
+    "산안커",
+    "일기통관",
+    "삼색동순",
+    "또이또이",
+    "역패",
+    "역패 후보",
+    "이페코",
+    "핑후 후보",
+    "탕야오",
+    "혼노두",
+  ];
+  return priority.find((name) => analysis.yaku.includes(name)) || "뚜렷한 역 없음";
+}
+
+function buildDailyYakuQuiz(source, seed = 0) {
+  const tiles = source.tiles || [];
+  const analysis = analyzeHandYaku(tiles);
+  const primaryAnswer = pickDailyYakuAnswer(analysis);
+  const correctAnswers = analysis.yaku.length > 0 ? analysis.yaku : [primaryAnswer];
+  const correctSet = new Set(correctAnswers);
+  const candidateAnswers = seededShuffle(
+    [
+      ...correctAnswers.filter((answer) => answer !== primaryAnswer),
+      ...DAILY_YAKU_OPTIONS.filter((answer) => answer !== primaryAnswer && !correctSet.has(answer)),
+    ],
+    seed,
+  );
+  const answers = seededShuffle([primaryAnswer, ...candidateAnswers.slice(0, 3)], seed + 17);
+  const correct = answers.map((answer, index) => (correctSet.has(answer) ? index : -1)).filter((index) => index !== -1);
+
+  return {
+    type: "yaku",
+    tiles,
+    question: "이 손패에서 먼저 확인할 수 있는 역 후보는 무엇일까요?",
+    answers,
+    correct,
+    explanation: analysis.explanation,
+    detectedYaku: analysis.yaku,
+  };
+}
+
 /** 요구패 N장 퀴즈: 오답 보기를 날짜 시드로 섞어 생성 */
 function buildYakuhaiCountQuiz(source, seed = 0) {
   const tiles = source.tiles || [];
@@ -1143,6 +1563,10 @@ function buildYakuhaiCountQuiz(source, seed = 0) {
 function resolveQuizPayload(source, seed = 0) {
   if (source?.quizKind === "yakuhaiCount") {
     return buildYakuhaiCountQuiz(source, seed);
+  }
+
+  if (source?.quizKind === "dailyYaku") {
+    return buildDailyYakuQuiz(source, seed);
   }
 
   // 정답 위치를 시드 기반으로 셔플 (correct: 0 고정 방지)
@@ -1251,7 +1675,7 @@ function getDailySetIndex(dayKey = getTodayKey()) {
 
 function getDailySet(dayKey = getTodayKey()) {
   const raw = DAILY_HAND_SETS[getDailySetIndex(dayKey)];
-  return resolveQuizPayload(raw, hashDayKey(`${dayKey}-quiz`));
+  return resolveQuizPayload({ ...raw, quizKind: "dailyYaku" }, hashDayKey(`${dayKey}-quiz`));
 }
 
 function formatDailyDateLabel(dayKey = getTodayKey()) {
@@ -1262,11 +1686,11 @@ function formatDailyDateLabel(dayKey = getTodayKey()) {
 function readDailyQuizState(dayKey = getTodayKey()) {
   try {
     const raw = JSON.parse(localStorage.getItem(DAILY_QUIZ_KEY) || "{}");
-    if (raw.dayKey === dayKey) return raw;
+    if (raw.dayKey === dayKey && raw.version === DAILY_QUIZ_VERSION) return raw;
   } catch (error) {
     // Ignore parse errors.
   }
-  return { dayKey, correct: false };
+  return { dayKey, version: DAILY_QUIZ_VERSION, correct: false };
 }
 
 function writeDailyQuizState(state) {
@@ -1296,7 +1720,7 @@ function renderDailyQuiz() {
   if (lead) {
     lead.textContent = saved.correct
       ? "오늘 문제를 맞혔습니다. 내일 새 손패가 열립니다."
-      : "매일 바뀌는 14장의 패를 보고 문제에 답해보자";
+      : "오늘의 14장을 보고 가장 먼저 보이는 역 후보를 골라보자";
   }
 
   dailyAnswered = saved.correct;
@@ -1349,7 +1773,7 @@ function answerDailyQuiz(index) {
       feedback.hidden = false;
       feedback.classList.add("is-success");
     }
-    writeDailyQuizState({ dayKey, correct: true });
+    writeDailyQuizState({ dayKey, version: DAILY_QUIZ_VERSION, correct: true });
     renderPartProgressBars();
   } else {
     buttons[index]?.classList.add("wrong");
@@ -1920,19 +2344,45 @@ function nextQuiz() {
 function calculateScore() {
   const han = Number(document.getElementById("hanInput").value);
   const fu = Number(document.getElementById("fuInput").value);
-  const capped = han >= 5;
-  const base = capped ? 2000 : fu * Math.pow(2, han + 2);
-  const ron = capped ? 8000 : Math.ceil((base * 4) / 100) * 100;
-  const dealerTsumo = capped ? 4000 : Math.ceil((base * 2) / 100) * 100;
-  const childTsumo = capped ? 2000 : Math.ceil(base / 100) * 100;
+  const scoreMode = document.querySelector('input[name="scoreMode"]:checked')?.value || "child";
+  const isDealer = scoreMode === "dealer";
+  const rawBase = fu * Math.pow(2, han + 2);
+  let base = rawBase;
+  let limitName = "";
+
+  if (han >= 13) {
+    base = 8000;
+    limitName = "역만";
+  } else if (han >= 11) {
+    base = 6000;
+    limitName = "삼배만";
+  } else if (han >= 8) {
+    base = 4000;
+    limitName = "배만";
+  } else if (han >= 6) {
+    base = 3000;
+    limitName = "하네만";
+  } else if (han >= 5 || rawBase >= 2000) {
+    base = 2000;
+    limitName = "만관";
+  }
+
+  const ron = Math.ceil((base * (isDealer ? 6 : 4)) / 100) * 100;
+  const dealerTsumo = Math.ceil((base * 2) / 100) * 100;
+  const childTsumo = Math.ceil(base / 100) * 100;
+  const tsumoText = isDealer
+    ? `${dealerTsumo.toLocaleString("ko-KR")}점씩`
+    : `${dealerTsumo.toLocaleString("ko-KR")} / ${childTsumo.toLocaleString("ko-KR")}점`;
 
   document.getElementById("hanValue").textContent = `${han}판`;
   document.getElementById("fuValue").textContent = `${fu}부`;
+  document.getElementById("ronLabel").textContent = isDealer ? "친 론" : "자 론";
+  document.getElementById("tsumoLabel").textContent = isDealer ? "친 쯔모(각자)" : "자 쯔모(친 / 자)";
   document.getElementById("ronScore").textContent = `${ron.toLocaleString("ko-KR")}점`;
-  document.getElementById("tsumoScore").textContent = `${dealerTsumo.toLocaleString("ko-KR")} / ${childTsumo.toLocaleString("ko-KR")}점`;
-  document.getElementById("scoreNote").textContent = capped
-    ? "5판 이상은 만관 기준입니다. 본장·도라 등은 추가로 더해집니다"
-    : "친·자 구분, 본장, 도라 등은 추가로 더해집니다";
+  document.getElementById("tsumoScore").textContent = tsumoText;
+  document.getElementById("scoreNote").textContent = limitName
+    ? `${limitName} 기준으로 계산합니다. 본장·도라 등은 별도로 더해집니다.`
+    : "본장·도라 등은 별도로 더해집니다.";
 }
 
 document.addEventListener("click", (event) => {
@@ -1998,6 +2448,13 @@ document.getElementById("fuInput").addEventListener("input", () => {
   calculateScore();
   renderPartProgressBars();
 });
+document.querySelectorAll('input[name="scoreMode"]').forEach((input) => {
+  input.addEventListener("change", () => {
+    markScoreSeen();
+    calculateScore();
+    renderPartProgressBars();
+  });
+});
 document.getElementById("dailyAnswerGrid")?.addEventListener("click", (event) => {
   const button = event.target.closest("button");
   if (button) answerDailyQuiz(Number(button.dataset.index));
@@ -2014,8 +2471,14 @@ renderQuiz();
 calculateScore();
 renderPartProgressBars();
 
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
+// Register Service Worker for PWA. 개발 서버에서는 캐시 혼선을 피하려고 등록하지 않습니다.
+if ('serviceWorker' in navigator && ["localhost", "127.0.0.1", ""].includes(location.hostname)) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.getRegistrations()
+      .then(registrations => registrations.forEach(registration => registration.unregister()))
+      .catch(err => console.log('Service Worker unregister failed:', err));
+  });
+} else if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
       .then(reg => console.log('Service Worker registered'))
