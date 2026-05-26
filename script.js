@@ -335,17 +335,17 @@ const DAILY_HAND_SETS = [
   },
   {
     tiles: ["m3", "m4", "m5", "p6", "p7", "p8", "s2", "s3", "s4", "z2", "z2", "m2", "m3", "m4"],
-    question: "이 손에서 자패는 몇 장인가요?",
-    answers: ["2장", "0장", "4장", "6장"],
+    question: "멘젠 텐파이라면 선언할 수 있는 것은?",
+    answers: ["리치", "역패", "또이또이", "혼노두"],
     correct: 0,
-    explanation: "z2(남) 2장이 있습니다. 나머지 12장은 수패 슌쯔 4개입니다.",
+    explanation: "울지 않은 텐파이에서 리치를 선언할 수 있습니다. 역패는 커쯔(같은 패 3장)가 필요하므로 이 손패의 z2 2장(또이츠)으로는 역패가 성립하지 않습니다.",
   },
   {
     tiles: ["m1", "m2", "m3", "m1", "m2", "m3", "p6", "p7", "p8", "s5", "s5", "p4", "p5", "p6"],
-    question: "이 손에 같은 슌쯔가 2세트 있습니다. 이를 가리키는 역 이름은?",
+    question: "같은 슌쯔가 2개 보일 때 역 후보는?",
     answers: ["이페코", "삼색동순", "혼노두", "치또이츠"],
     correct: 0,
-    explanation: "멘젠에서 같은 수패의 같은 슌쯔 2개가 있으면 이페코 1판입니다.",
+    explanation: "같은 수패의 같은 슌쯔 2개는 이페코 후보입니다.",
   },
   {
     tiles: ["m3", "m4", "m5", "p3", "p4", "p5", "s3", "s4", "s5", "z5", "z5", "m7", "m8", "m9"],
@@ -398,10 +398,10 @@ const DAILY_HAND_SETS = [
   },
   {
     tiles: ["z1", "z1", "z1", "m4", "m5", "m6", "p2", "p3", "p4", "s7", "s8", "s9", "z5", "z5"],
-    question: "이 손에서 커쯔(같은 패 3장)는 몇 개인가요?",
-    answers: ["1개", "0개", "2개", "3개"],
+    question: "동 3장이 보이면?",
+    answers: ["역패(조건부)", "탕야오", "리치", "치또이츠"],
     correct: 0,
-    explanation: "z1(동) 3장이 커쯔 1개입니다. 나머지는 슌쯔 3개 + 백(z5) 머리입니다.",
+    explanation: "자신의 장풍(동장)이거나 자풍(동가)일 때 역패가 됩니다. 입문에서는 '바람·삼원패 커쯔 = 역패 후보'로 기억하세요.",
   },
   {
     tiles: ["m2", "m3", "m4", "p6", "p7", "p8", "s2", "s3", "s4", "z2", "z2", "z3", "z3", "z4"],
@@ -1146,7 +1146,12 @@ function resolveQuizPayload(source, seed = 0) {
   }
 
   // 정답 위치를 시드 기반으로 셔플 (correct: 0 고정 방지)
-  if (source?.answers?.length >= 2 && typeof source.correct === "number") {
+  // correct는 숫자 하나 또는 숫자 배열(복수 정답) 모두 지원
+  const correctRaw = source?.correct;
+  const isMulti = Array.isArray(correctRaw);
+  const hasCorrect = typeof correctRaw === "number" || isMulti;
+
+  if (source?.answers?.length >= 2 && hasCorrect) {
     let n = seed;
     const next = () => {
       n = (n * 1664525 + 1013904223) >>> 0;
@@ -1154,18 +1159,22 @@ function resolveQuizPayload(source, seed = 0) {
     };
 
     const answers = [...source.answers];
-    const correctAnswer = answers[source.correct];
+    // 정답 텍스트(들) 기억
+    const correctSet = isMulti
+      ? correctRaw.map((i) => answers[i])
+      : [answers[correctRaw]];
 
     for (let i = answers.length - 1; i > 0; i -= 1) {
       const j = next() % (i + 1);
       [answers[i], answers[j]] = [answers[j], answers[i]];
     }
 
-    return {
-      ...source,
-      answers,
-      correct: answers.indexOf(correctAnswer),
-    };
+    // 셔플 후 정답 인덱스 재계산
+    const newCorrect = isMulti
+      ? answers.map((a, i) => (correctSet.includes(a) ? i : -1)).filter((i) => i !== -1)
+      : answers.indexOf(correctSet[0]);
+
+    return { ...source, answers, correct: newCorrect };
   }
 
   return source;
@@ -1310,7 +1319,8 @@ function renderDailyQuiz() {
   if (saved.correct) {
     const buttons = grid.querySelectorAll("button");
     buttons.forEach((button) => (button.disabled = true));
-    buttons[set.correct]?.classList.add("correct");
+    const correctIndices = Array.isArray(set.correct) ? set.correct : [set.correct];
+    correctIndices.forEach((ci) => buttons[ci]?.classList.add("correct"));
   }
 }
 
@@ -1326,9 +1336,14 @@ function answerDailyQuiz(index) {
 
   dailyAnswered = true;
   buttons.forEach((button) => (button.disabled = true));
-  buttons[set.correct]?.classList.add("correct");
 
-  if (index === set.correct) {
+  // correct는 숫자 또는 배열 모두 지원
+  const correctIndices = Array.isArray(set.correct) ? set.correct : [set.correct];
+  const isCorrect = correctIndices.includes(index);
+
+  correctIndices.forEach((ci) => buttons[ci]?.classList.add("correct"));
+
+  if (isCorrect) {
     if (feedback) {
       feedback.textContent = `정답! ${set.explanation}`;
       feedback.hidden = false;
@@ -1344,7 +1359,7 @@ function answerDailyQuiz(index) {
     }
   }
 
-  if (lead && index === set.correct) {
+  if (lead && isCorrect) {
     lead.textContent = "오늘 문제를 맞혔습니다. 내일 새 손패가 열립니다.";
   }
 }
@@ -1876,9 +1891,14 @@ function answerQuiz(index) {
   const quiz = resolveQuizPayload(quizzes[currentQuiz], currentQuiz + 1);
   const buttons = document.querySelectorAll("#answerGrid button");
   buttons.forEach((button) => (button.disabled = true));
-  buttons[quiz.correct].classList.add("correct");
 
-  if (index === quiz.correct) {
+  // correct는 숫자 또는 배열 모두 지원
+  const correctIndices = Array.isArray(quiz.correct) ? quiz.correct : [quiz.correct];
+  const isCorrect = correctIndices.includes(index);
+
+  correctIndices.forEach((ci) => buttons[ci]?.classList.add("correct"));
+
+  if (isCorrect) {
     quizScore += 1;
     document.getElementById("feedback").textContent = `정답! ${quiz.explanation}`;
   } else {
