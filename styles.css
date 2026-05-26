@@ -45,7 +45,7 @@ button {
 .phone-shell {
   position: relative;
   display: grid;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto 1fr;
   width: min(100%, var(--shell-max));
   min-height: 100vh;
   min-height: 100dvh;
@@ -56,13 +56,7 @@ button {
 }
 
 .status-bar {
-  display: flex;
-  justify-content: space-between;
-  padding: max(8px, env(safe-area-inset-top)) 18px 6px;
-  color: white;
-  background: var(--primary-dark);
-  font-size: 0.76rem;
-  font-weight: 700;
+  display: none;
 }
 
 .app-bar {
