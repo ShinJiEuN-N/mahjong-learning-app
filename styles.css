@@ -42,6 +42,15 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
+a {
+  color: var(--primary-dark);
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--primary-dark);
+}
+
 .phone-shell {
   position: relative;
   display: grid;
