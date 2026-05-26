@@ -2,17 +2,35 @@
   "name": "작탁을 만들자!",
   "short_name": "작탁",
   "description": "리치마작 학습 앱 - 규칙, 역, 퀴즈, 전국 마장 찾기",
-  "start_url": "./",
+  "start_url": "/mahjong-learning-app/",
   "display": "standalone",
   "background_color": "#fbfdf9",
   "theme_color": "#116b5b",
   "orientation": "any",
   "icons": [
     {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
