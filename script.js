@@ -1609,26 +1609,31 @@ function renderParlorList() {
 
   list.innerHTML = filtered
     .map(
-      (parlor) => `
-        <article class="parlor-card">
-          <div class="parlor-card-head">
-            <h3>${escapeHtml(parlor.name)}</h3>
-            ${parlor.district ? `<span class="parlor-district">${escapeHtml(parlor.district)}</span>` : ""}
+      (parlor, index) => `
+        <article class="parlor-card" data-parlor-index="${index}">
+          <button type="button" class="parlor-card-header" aria-expanded="false">
+            <div class="parlor-card-head">
+              <h3>${escapeHtml(parlor.name)}</h3>
+              ${parlor.district ? `<span class="parlor-district">${escapeHtml(parlor.district)}</span>` : ""}
+            </div>
+            <span class="parlor-expand-icon" aria-hidden="true">▼</span>
+          </button>
+          <div class="parlor-card-details">
+            ${parlor.address ? `<p class="parlor-address">${escapeHtml(parlor.address)}</p>` : ""}
+            ${parlor.hours ? `<p class="parlor-meta"><strong>영업</strong> ${escapeHtml(parlor.hours)}</p>` : ""}
+            ${parlor.phone ? `<p class="parlor-meta"><strong>연락</strong> <a href="tel:${escapeHtml(parlor.phone.replace(/\s/g, ""))}">${escapeHtml(parlor.phone)}</a></p>` : ""}
+            ${
+              parlor.url
+                ? `<p class="parlor-meta"><strong>링크</strong> <a href="${escapeHtml(parlor.url)}" target="_blank" rel="noopener noreferrer">홈페이지·지도</a></p>`
+                : ""
+            }
+            ${
+              parlor.tags?.length
+                ? `<div class="concept-chip-list">${parlor.tags.map((tag) => `<span class="concept-chip">${escapeHtml(tag)}</span>`).join("")}</div>`
+                : ""
+            }
+            ${parlor.note ? `<p class="parlor-card-note">${escapeHtml(parlor.note)}</p>` : ""}
           </div>
-          ${parlor.address ? `<p class="parlor-address">${escapeHtml(parlor.address)}</p>` : ""}
-          ${parlor.hours ? `<p class="parlor-meta"><strong>영업</strong> ${escapeHtml(parlor.hours)}</p>` : ""}
-          ${parlor.phone ? `<p class="parlor-meta"><strong>연락</strong> <a href="tel:${escapeHtml(parlor.phone.replace(/\s/g, ""))}">${escapeHtml(parlor.phone)}</a></p>` : ""}
-          ${
-            parlor.url
-              ? `<p class="parlor-meta"><strong>링크</strong> <a href="${escapeHtml(parlor.url)}" target="_blank" rel="noopener noreferrer">홈페이지·지도</a></p>`
-              : ""
-          }
-          ${
-            parlor.tags?.length
-              ? `<div class="concept-chip-list">${parlor.tags.map((tag) => `<span class="concept-chip">${escapeHtml(tag)}</span>`).join("")}</div>`
-              : ""
-          }
-          ${parlor.note ? `<p class="parlor-card-note">${escapeHtml(parlor.note)}</p>` : ""}
         </article>
       `,
     )
@@ -1891,6 +1896,24 @@ document.getElementById("parlorRegionBar")?.addEventListener("click", (event) =>
   if (!chip) return;
   activeParlorRegion = chip.dataset.region || "all";
   renderPlay();
+});
+
+document.getElementById("parlorList")?.addEventListener("click", (event) => {
+  const header = event.target.closest(".parlor-card-header");
+  if (!header) return;
+  
+  const card = header.closest(".parlor-card");
+  const details = card.querySelector(".parlor-card-details");
+  const isExpanded = header.getAttribute("aria-expanded") === "true";
+  
+  header.setAttribute("aria-expanded", !isExpanded);
+  card.classList.toggle("parlor-card--expanded", !isExpanded);
+  
+  if (!isExpanded) {
+    details.style.maxHeight = details.scrollHeight + "px";
+  } else {
+    details.style.maxHeight = "0";
+  }
 });
 
 document.getElementById("ruleUnitList")?.addEventListener("click", (event) => {

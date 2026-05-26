@@ -801,10 +801,15 @@ button {
 }
 
 .parlor-card {
-  padding: 16px;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: var(--surface);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.parlor-card--expanded {
+  border-color: var(--primary);
 }
 
 .parlor-card--empty {
@@ -812,13 +817,53 @@ button {
   color: var(--muted);
 }
 
+.parlor-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease;
+}
+
+.parlor-card-header:hover {
+  background: rgba(17, 107, 91, 0.04);
+}
+
 .parlor-card-head {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 6px 10px;
-  margin-bottom: 8px;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.parlor-expand-icon {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: var(--muted);
+  transition: transform 0.2s ease;
+}
+
+.parlor-card-header[aria-expanded="true"] .parlor-expand-icon {
+  transform: rotate(-180deg);
+}
+
+.parlor-card-details {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 16px;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.parlor-card--expanded .parlor-card-details {
+  padding: 0 16px 16px;
 }
 
 .parlor-card h3 {
@@ -827,13 +872,21 @@ button {
 }
 
 .parlor-district {
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: 24px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: white;
+  background: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .parlor-address {
-  margin: 0 0 8px;
+  margin: 8px 0 8px;
   line-height: 1.45;
 }
 
