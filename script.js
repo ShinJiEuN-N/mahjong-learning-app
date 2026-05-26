@@ -1093,7 +1093,6 @@ function countYakuhaiTiles(tiles) {
 function buildYakuhaiCountQuiz(source, seed = 0) {
   const tiles = source.tiles || [];
   const count = countYakuhaiTiles(tiles);
-  const wrong = new Set();
 
   let n = seed;
   const next = () => {
@@ -1101,13 +1100,28 @@ function buildYakuhaiCountQuiz(source, seed = 0) {
     return n;
   };
 
-  while (wrong.size < 3) {
-    const offset = (next() % 5) - 2;
-    const candidate = Math.max(0, Math.min(14, count + offset));
-    if (candidate !== count) wrong.add(candidate);
+  // 오답 풀: 정답에서 최소 1 이상 차이나는 값만 포함, 최대 ±6 범위에서 수집
+  const pool = [];
+  for (let v = Math.max(0, count - 6); v <= Math.min(14, count + 6); v++) {
+    if (v !== count) pool.push(v);
   }
 
+  // 풀이 3개 미만인 극단값(0~2, 12~14) 대비: 전체 범위에서 보충
+  for (let v = 0; v <= 14; v++) {
+    if (v !== count && !pool.includes(v)) pool.push(v);
+  }
+
+  // Fisher-Yates 셔플로 풀 섞기
+  for (let i = pool.length - 1; i > 0; i -= 1) {
+    const j = next() % (i + 1);
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  // 앞에서 3개 선택 (중복 없음 보장)
+  const wrong = pool.slice(0, 3);
   const options = [count, ...wrong];
+
+  // 보기 순서 셔플
   for (let i = options.length - 1; i > 0; i -= 1) {
     const j = next() % (i + 1);
     [options[i], options[j]] = [options[j], options[i]];
@@ -1117,7 +1131,7 @@ function buildYakuhaiCountQuiz(source, seed = 0) {
   return {
     type: source.type || "tile",
     tiles,
-    question: "이 14장의 요구패(1·9·자패)는 몇 장인가요?",
+    question: "이 14장에서 요구패(1·9·자패)는 몇 장인가요?",
     answers,
     correct: answers.indexOf(`${count}장`),
     explanation:
@@ -1130,6 +1144,30 @@ function resolveQuizPayload(source, seed = 0) {
   if (source?.quizKind === "yakuhaiCount") {
     return buildYakuhaiCountQuiz(source, seed);
   }
+
+  // 정답 위치를 시드 기반으로 셔플 (correct: 0 고정 방지)
+  if (source?.answers?.length >= 2 && typeof source.correct === "number") {
+    let n = seed;
+    const next = () => {
+      n = (n * 1664525 + 1013904223) >>> 0;
+      return n;
+    };
+
+    const answers = [...source.answers];
+    const correctAnswer = answers[source.correct];
+
+    for (let i = answers.length - 1; i > 0; i -= 1) {
+      const j = next() % (i + 1);
+      [answers[i], answers[j]] = [answers[j], answers[i]];
+    }
+
+    return {
+      ...source,
+      answers,
+      correct: answers.indexOf(correctAnswer),
+    };
+  }
+
   return source;
 }
 
