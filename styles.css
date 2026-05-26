@@ -20,6 +20,11 @@
 
 * {
   box-sizing: border-box;
+  -webkit-text-fill-color: inherit;
+}
+
+:root {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
