@@ -47,13 +47,13 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-a {
+a,
+a:link,
+a:visited,
+a:active {
   color: var(--primary-dark);
+  -webkit-text-fill-color: var(--primary-dark);
   text-decoration: none;
-}
-
-a:visited {
-  color: var(--primary-dark);
 }
 
 .phone-shell {
