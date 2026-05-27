@@ -574,15 +574,40 @@ a:active {
 }
 
 .tile-group {
-  padding: 16px;
+  display: grid;
+  grid-template-rows: auto minmax(42px, auto) auto;
+  align-content: start;
+  gap: 8px;
+  min-height: 156px;
+  padding: 14px;
+  border-radius: 16px;
 }
 
 .tile-group h3 {
-  margin: 0 0 4px;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.28;
+}
+
+.tile-group p {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
 }
 
 .tile-group .hand-row {
-  margin-top: 12px;
+  align-self: end;
+  min-height: var(--tile-h);
+  margin-top: 4px;
+  align-items: center;
+}
+
+.tile-intro-group {
+  grid-template-rows: auto;
+  min-height: 0;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 18px;
 }
 
 .rules-list-panel .rule-unit-list,
@@ -1091,6 +1116,7 @@ a:active {
 
   .tile-catalog {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
   }
 
   .tile-intro-group,
