@@ -1,5 +1,5 @@
 // Service Worker for PWA — Network first, cache fallback
-const CACHE_NAME = 'mahjong-app-v8';
+const CACHE_NAME = 'mahjong-app-v9';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
