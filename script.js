@@ -8,10 +8,7 @@ const views = {
   play: "마장 찾기",
 };
 
-const ORIENTATION_KEY = "mahjongManualOrientation";
-
 let activeParlorRegion = "all";
-let manualOrientation = readOrientationPreference();
 
 /** 상단 로고용 패 1장 (8삭) */
 const appBarLogoTile = "s8";
@@ -1653,58 +1650,6 @@ function renderAppBarLogo() {
   container.innerHTML = tileMarkup(appBarLogoTile);
 }
 
-function readOrientationPreference() {
-  try {
-    const saved = localStorage.getItem(ORIENTATION_KEY);
-    return saved === "landscape" ? "landscape" : "portrait";
-  } catch (error) {
-    return "portrait";
-  }
-}
-
-function saveOrientationPreference(value) {
-  try {
-    localStorage.setItem(ORIENTATION_KEY, value);
-  } catch (error) {
-    // Storage can be blocked in some browser modes. The button should still work for this session.
-  }
-}
-
-function renderOrientationToggle() {
-  const button = document.getElementById("orientationToggle");
-  const icon = document.getElementById("orientationIcon");
-  const label = document.getElementById("orientationLabel");
-  const isLandscape = manualOrientation === "landscape";
-
-  document.body.classList.toggle("manual-landscape", isLandscape);
-  document.body.classList.toggle("manual-portrait", !isLandscape);
-
-  if (button) {
-    button.setAttribute("aria-pressed", String(isLandscape));
-    button.setAttribute("aria-label", isLandscape ? "세로 화면으로 전환" : "가로 화면으로 전환");
-  }
-  if (icon) icon.textContent = isLandscape ? "▭" : "▯";
-  if (label) label.textContent = isLandscape ? "가로" : "세로";
-}
-
-async function requestOrientationLock(value) {
-  if (!screen.orientation?.lock) return false;
-
-  try {
-    await screen.orientation.lock(value === "landscape" ? "landscape" : "portrait");
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-
-async function toggleManualOrientation() {
-  manualOrientation = manualOrientation === "landscape" ? "portrait" : "landscape";
-  saveOrientationPreference(manualOrientation);
-  renderOrientationToggle();
-  await requestOrientationLock(manualOrientation);
-}
-
 function tileMarkup(tileCode) {
   const tile = parseTileCode(tileCode);
   const label = getTileLabel(tileCode);
@@ -2604,7 +2549,6 @@ document.getElementById("answerGrid").addEventListener("click", (event) => {
 
 document.getElementById("appBarLogo")?.addEventListener("click", () => setView("dashboard"));
 document.getElementById("floatingHomeBtn")?.addEventListener("click", () => setView("dashboard"));
-document.getElementById("orientationToggle")?.addEventListener("click", toggleManualOrientation);
 
 document.getElementById("parlorRegionBar")?.addEventListener("click", (event) => {
   const chip = event.target.closest(".parlor-region-chip");
@@ -2668,7 +2612,6 @@ document.getElementById("dailyAnswerGrid")?.addEventListener("click", (event) =>
 });
 
 renderAppBarLogo();
-renderOrientationToggle();
 renderPlay();
 renderTileCatalog();
 renderYaku();

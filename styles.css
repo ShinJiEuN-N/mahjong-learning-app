@@ -118,60 +118,6 @@ a:active {
   text-overflow: ellipsis;
 }
 
-.orientation-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 36px;
-  margin-left: auto;
-  padding: 7px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 999px;
-  color: white;
-  background: rgba(255, 255, 255, 0.12);
-  cursor: pointer;
-  font-size: 0.78rem;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.orientation-toggle span:first-child {
-  font-size: 1.05rem;
-  line-height: 1;
-}
-
-.manual-landscape {
-  --shell-max: 840px;
-  --shell-pad-x: 22px;
-  --tile-w: 42px;
-  --tile-h: 54px;
-}
-
-.manual-landscape .phone-shell {
-  width: min(100%, var(--shell-max));
-}
-
-.manual-landscape .quick-actions,
-.manual-landscape .tile-catalog,
-.manual-landscape .score-guide-list {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.manual-landscape .daily-quiz-card,
-.manual-landscape .quiz-card,
-.manual-landscape .score-card,
-.manual-landscape .score-result,
-.manual-landscape .detail-sheet {
-  max-width: none;
-}
-
-.manual-landscape .daily-hand-row,
-.manual-landscape .quiz-tiles {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-
 .eyebrow,
 .section-title h2,
 .hero-card h2,
