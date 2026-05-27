@@ -417,6 +417,10 @@ a:active {
   height: 6px;
 }
 
+.part-progress--ghost {
+  visibility: hidden;
+}
+
 .quiz-status {
   display: flex;
   justify-content: space-between;
