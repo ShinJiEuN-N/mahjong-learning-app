@@ -256,6 +256,30 @@ a:active {
   white-space: nowrap;
 }
 
+.daily-quiz-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.daily-quiz-meta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #edf4ef;
+}
+
+.daily-quiz-meta .daily-difficulty {
+  color: white;
+  background: var(--primary);
+}
+
 .daily-quiz-lead,
 .daily-question {
   margin: 10px 0 0;
@@ -280,10 +304,14 @@ a:active {
 .daily-feedback {
   margin: 0;
   min-height: 0;
+  line-height: 1.55;
 }
 
 .daily-feedback:not(:empty) {
   margin-top: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #f4f0e8;
 }
 
 .daily-feedback:empty {
@@ -292,6 +320,12 @@ a:active {
 
 .daily-feedback.is-success {
   color: var(--primary);
+  background: rgba(17, 107, 91, 0.1);
+}
+
+.daily-feedback strong,
+.daily-feedback span {
+  display: block;
 }
 
 .hero-card {

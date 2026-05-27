@@ -548,7 +548,8 @@ const DAILY_HAND_SETS = [
 const PROGRESS_KEY = "jaktakPartProgress";
 const LEGACY_STORAGE_KEY = "jaktakCompletedViews";
 const DAILY_QUIZ_KEY = "jaktakDailyQuiz";
-const DAILY_QUIZ_VERSION = 2;
+const DAILY_QUIZ_VERSION = 3;
+const DAILY_STREAK_KEY = "jaktakDailyStreak";
 const TILE_IMAGE_BASE_URL = "https://commons.wikimedia.org/wiki/Special:Redirect/file/";
 
 const tileGroups = [
@@ -1508,8 +1509,23 @@ function buildDailyYakuQuiz(source, seed = 0) {
     answers,
     correct,
     explanation: analysis.explanation,
+    answerNotes: buildDailyAnswerNotes(answers, correctSet),
+    difficulty: getDailyDifficulty(analysis.yaku.length, tiles),
     detectedYaku: analysis.yaku,
   };
+}
+
+function buildDailyAnswerNotes(answers, correctSet) {
+  return answers.map((answer) => {
+    if (correctSet.has(answer)) return `${answer}: 이 손패에서 확인할 수 있는 후보입니다.`;
+    return `${answer}: 지금 손패에서는 조건이 먼저 보이지 않습니다.`;
+  });
+}
+
+function getDailyDifficulty(correctCount = 0, tiles = []) {
+  if (correctCount >= 3) return "응용";
+  if (correctCount >= 2 || tiles.length >= 14) return "기초";
+  return "입문";
 }
 
 /** 요구패 N장 퀴즈: 오답 보기를 날짜 시드로 섞어 생성 */
@@ -1559,6 +1575,10 @@ function buildYakuhaiCountQuiz(source, seed = 0) {
     correct: answers.indexOf(`${count}장`),
     explanation:
       source.explanation || `1·9 수패와 자패를 합치면 ${count}장입니다.`,
+    answerNotes: answers.map((answer) =>
+      answer === `${count}장` ? "정확합니다. 1·9 수패와 자패만 세면 됩니다." : "다시 세어보세요. 2~8 수패는 요구패가 아닙니다.",
+    ),
+    difficulty: "입문",
   };
 }
 
@@ -1601,7 +1621,17 @@ function resolveQuizPayload(source, seed = 0) {
       ? answers.map((a, i) => (correctSet.includes(a) ? i : -1)).filter((i) => i !== -1)
       : answers.indexOf(correctSet[0]);
 
-    return { ...source, answers, correct: newCorrect };
+    const correctIndices = Array.isArray(newCorrect) ? newCorrect : [newCorrect];
+    return {
+      ...source,
+      type: source.type || "mixed",
+      answers,
+      correct: newCorrect,
+      answerNotes:
+        source.answerNotes ||
+        answers.map((answer, index) => (correctIndices.includes(index) ? `${answer}: 맞는 판단입니다.` : `${answer}: 이 손패의 핵심과는 거리가 있습니다.`)),
+      difficulty: source.difficulty || (isMulti ? "응용" : "기초"),
+    };
   }
 
   return source;
@@ -1730,7 +1760,8 @@ function getDailySetIndex(dayKey = getTodayKey()) {
 
 function getDailySet(dayKey = getTodayKey()) {
   const raw = DAILY_HAND_SETS[getDailySetIndex(dayKey)];
-  return resolveQuizPayload({ ...raw, quizKind: "dailyYaku" }, hashDayKey(`${dayKey}-quiz`));
+  const quizKind = raw.quizKind || (raw.answers ? undefined : "dailyYaku");
+  return resolveQuizPayload({ ...raw, quizKind }, hashDayKey(`${dayKey}-quiz`));
 }
 
 function formatDailyDateLabel(dayKey = getTodayKey()) {
@@ -1756,6 +1787,108 @@ function writeDailyQuizState(state) {
   }
 }
 
+function readDailyStreakState() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(DAILY_STREAK_KEY) || "{}");
+    return {
+      streak: Number(raw.streak || 0),
+      lastCorrectDay: raw.lastCorrectDay || "",
+      solvedDays: Array.isArray(raw.solvedDays) ? raw.solvedDays : [],
+    };
+  } catch (error) {
+    return { streak: 0, lastCorrectDay: "", solvedDays: [] };
+  }
+}
+
+function writeDailyStreakState(state) {
+  try {
+    localStorage.setItem(DAILY_STREAK_KEY, JSON.stringify(state));
+  } catch (error) {
+    // Ignore blocked storage.
+  }
+}
+
+function shiftDayKey(dayKey, offset) {
+  const date = new Date(`${dayKey}T00:00:00`);
+  date.setDate(date.getDate() + offset);
+  return date.toISOString().slice(0, 10);
+}
+
+function updateDailyStreak(dayKey = getTodayKey()) {
+  const state = readDailyStreakState();
+  if (state.solvedDays.includes(dayKey)) return state;
+
+  const yesterday = shiftDayKey(dayKey, -1);
+  const streak = state.lastCorrectDay === yesterday ? state.streak + 1 : 1;
+  const solvedDays = [...state.solvedDays, dayKey].slice(-30);
+  const nextState = { streak, lastCorrectDay: dayKey, solvedDays };
+  writeDailyStreakState(nextState);
+  return nextState;
+}
+
+function getDailyMetaText(dayKey = getTodayKey()) {
+  const state = readDailyStreakState();
+  const weekDays = Array.from({ length: 7 }, (_, index) => shiftDayKey(dayKey, -index));
+  const weekCount = weekDays.filter((day) => state.solvedDays.includes(day)).length;
+  return `${state.streak}일 연속 · 이번 주 ${weekCount}/7`;
+}
+
+function getTomorrowPreviewText(dayKey = getTodayKey()) {
+  const tomorrowSet = getDailySet(shiftDayKey(dayKey, 1));
+  return `내일 예고: ${tomorrowSet.difficulty || "기초"} · ${getDailyTypeLabel(tomorrowSet)}`;
+}
+
+function getDailyTypeLabel(set) {
+  if (set.type === "yaku") return "역 후보";
+  if (set.type === "tile") return "패 세기";
+  return "판단";
+}
+
+function renderDailyMetaHtml(set, dayKey = getTodayKey()) {
+  return `
+      <span class="daily-difficulty">${escapeHtml(set.difficulty || "기초")}</span>
+      <span>${escapeHtml(getDailyTypeLabel(set))}</span>
+      <span>${escapeHtml(getDailyMetaText(dayKey))}</span>
+      <span>${escapeHtml(getTomorrowPreviewText(dayKey))}</span>
+    `;
+}
+
+function getCorrectIndices(set) {
+  return Array.isArray(set.correct) ? set.correct : [set.correct];
+}
+
+function getCorrectAnswerLabels(set) {
+  const indices = getCorrectIndices(set);
+  return indices.map((index) => set.answers[index]).filter(Boolean);
+}
+
+function buildDailyResultHtml(set, selectedIndex, isCorrect) {
+  const selectedNote = set.answerNotes?.[selectedIndex] || "";
+  const correctLabels = getCorrectAnswerLabels(set);
+  const otherCandidates = Array.isArray(set.detectedYaku)
+    ? set.detectedYaku.filter((name) => !correctLabels.includes(name))
+    : [];
+  const parts = [
+    `<strong>${isCorrect ? "정답!" : "아쉬워요."}</strong> ${escapeHtml(selectedNote || set.explanation || "")}`,
+    `<span>${escapeHtml(set.explanation || "")}</span>`,
+  ];
+
+  if (!isCorrect && correctLabels.length > 0) {
+    parts.push(`<span>정답 후보: ${escapeHtml(correctLabels.join(", "))}</span>`);
+  }
+
+  if (correctLabels.length > 1 || otherCandidates.length > 0) {
+    const labels = [...new Set([...correctLabels, ...otherCandidates])].join(", ");
+    parts.push(`<span>함께 볼 후보: ${escapeHtml(labels)}</span>`);
+  }
+
+  if (isCorrect) {
+    parts.push(`<span>${escapeHtml(getTomorrowPreviewText())}</span>`);
+    parts.push("<span>내일 새 손패가 열립니다.</span>");
+  }
+  return parts.filter(Boolean).join("<br>");
+}
+
 /** 홈 데일리: 오늘 14장 + 1문항 */
 function renderDailyQuiz() {
   const dayKey = getTodayKey();
@@ -1768,8 +1901,19 @@ function renderDailyQuiz() {
   const grid = document.getElementById("dailyAnswerGrid");
   const feedback = document.getElementById("dailyFeedback");
   const lead = document.getElementById("dailyQuizLead");
+  const card = document.querySelector(".daily-quiz-card");
+  let meta = document.getElementById("dailyQuizMeta");
+  if (card && !meta) {
+    meta = document.createElement("div");
+    meta.id = "dailyQuizMeta";
+    meta.className = "daily-quiz-meta";
+    card.querySelector(".daily-quiz-header")?.after(meta);
+  }
 
   if (badge) badge.textContent = formatDailyDateLabel(dayKey);
+  if (meta) {
+    meta.innerHTML = renderDailyMetaHtml(set, dayKey);
+  }
   if (hand) hand.innerHTML = set.tiles.map(tileMarkup).join("");
   if (question) question.textContent = set.question;
   if (lead) {
@@ -1780,8 +1924,8 @@ function renderDailyQuiz() {
 
   dailyAnswered = saved.correct;
   if (feedback) {
-    const message = saved.correct ? "오늘 데일리 퀴즈 완료!" : "";
-    feedback.textContent = message;
+    const message = saved.correct ? `<strong>오늘 완료!</strong><br><span>내일 새 손패가 열립니다.</span>` : "";
+    feedback.innerHTML = message;
     feedback.hidden = !message;
     feedback.classList.toggle("is-success", saved.correct);
   }
@@ -1824,22 +1968,29 @@ function answerDailyQuiz(index) {
 
   if (isCorrect) {
     if (feedback) {
-      feedback.textContent = `정답! ${set.explanation}`;
+      feedback.innerHTML = buildDailyResultHtml(set, index, true);
       feedback.hidden = false;
       feedback.classList.add("is-success");
     }
     writeDailyQuizState({ dayKey, version: DAILY_QUIZ_VERSION, correct: true });
+    updateDailyStreak(dayKey);
     renderPartProgressBars();
   } else {
     buttons[index]?.classList.add("wrong");
     if (feedback) {
-      feedback.textContent = `아쉬워요. ${set.explanation}`;
+      feedback.innerHTML = buildDailyResultHtml(set, index, false);
       feedback.hidden = false;
+      feedback.classList.remove("is-success");
     }
   }
 
   if (lead && isCorrect) {
     lead.textContent = "오늘 문제를 맞혔습니다. 내일 새 손패가 열립니다.";
+  }
+
+  const meta = document.getElementById("dailyQuizMeta");
+  if (meta) {
+    meta.innerHTML = renderDailyMetaHtml(set, dayKey);
   }
 }
 
