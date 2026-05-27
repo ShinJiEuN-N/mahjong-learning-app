@@ -513,6 +513,7 @@ a:active {
   display: grid;
   grid-template-columns: 44px 1fr;
   grid-template-rows: auto auto auto;
+  align-content: start;
   gap: 2px 12px;
   min-height: 78px;
   padding: 14px;
