@@ -1156,6 +1156,24 @@ function parseTileCode(tileCode) {
   return { code, suitKey, value, isRed };
 }
 
+function sortTilesAscending(tiles = []) {
+  const suitOrder = { m: 0, p: 1, s: 2, z: 3 };
+  return [...tiles]
+    .map((tileCode, index) => {
+      const tile = parseTileCode(tileCode);
+      if (!tile) return { tileCode, index, order: 99, value: 99, red: 1 };
+      return {
+        tileCode,
+        index,
+        order: suitOrder[tile.suitKey] ?? 99,
+        value: tile.value,
+        red: tile.isRed ? 1 : 0,
+      };
+    })
+    .sort((a, b) => a.order - b.order || a.value - b.value || a.red - b.red || a.index - b.index)
+    .map((item) => item.tileCode);
+}
+
 function getTileFileName(tileCode) {
   const tile = parseTileCode(tileCode);
   if (!tile) return null;
@@ -1859,7 +1877,7 @@ function renderDailyQuiz() {
   if (meta) {
     meta.innerHTML = renderDailyMetaHtml(set, dayKey);
   }
-  if (hand) hand.innerHTML = set.tiles.map(tileMarkup).join("");
+  if (hand) hand.innerHTML = sortTilesAscending(set.tiles).map(tileMarkup).join("");
   if (question) question.textContent = set.question;
   if (lead) {
     lead.textContent = saved.correct
