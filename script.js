@@ -1,5 +1,11 @@
 const views = {
   dashboard: "오늘 학습",
+  "entry-check": "입문 유형 진단",
+  "course-result": "추천 코스",
+  "online-offline-guide": "온라인에서 오프라인으로",
+  "first-visit": "처음 마장 가기",
+  "review-template": "패보 질문",
+  "friend-code-card": "같이 치기 카드",
   rules: "기본 규칙",
   tiles: "패 익히기",
   yaku: "심화 규칙",
@@ -12,6 +18,156 @@ let activeParlorRegion = "all";
 
 /** 상단 로고용 패 1장 (8삭) */
 const appBarLogoTile = "s8";
+
+const ENTRY_CHECK_KEY = "jaktakEntryCheck";
+const COURSE_KEY = "jaktakRecommendedCourse";
+
+const userTypeQuestions = [
+  {
+    id: "entry",
+    title: "마작을 어디서 처음 접했나요?",
+    options: [
+      { value: "content", label: "유튜브/방송/콘텐츠를 보고 관심이 생겼어요" },
+      { value: "mahjong-soul", label: "작혼으로 시작했어요" },
+      { value: "ichibangai", label: "마작일번가로 시작했어요" },
+      { value: "offline-friend", label: "친구 따라 오프라인에서 시작했어요" },
+      { value: "class", label: "원데이 클래스/마장에서 시작했어요" },
+      { value: "unknown", label: "아직 잘 모르겠어요" },
+    ],
+  },
+  {
+    id: "pain",
+    title: "지금 가장 어려운 건 무엇인가요?",
+    options: [
+      { value: "rules", label: "룰을 모르겠어요" },
+      { value: "why-lost", label: "왜 졌는지 모르겠어요" },
+      { value: "no-yaku", label: "역이 왜 안 붙는지 모르겠어요" },
+      { value: "no-friends", label: "같이 칠 사람이 없어요" },
+      { value: "offline-fear", label: "오프라인 마장이 무서워요" },
+      { value: "score", label: "점수 계산이 어려워요" },
+    ],
+  },
+  {
+    id: "platform",
+    title: "앞으로 어디서 주로 치고 싶나요?",
+    options: [
+      { value: "mahjong-soul", label: "작혼" },
+      { value: "ichibangai", label: "마작일번가" },
+      { value: "offline", label: "오프라인 마장" },
+      { value: "both", label: "온라인과 오프라인 둘 다" },
+      { value: "unknown", label: "아직 모르겠어요" },
+    ],
+  },
+  {
+    id: "goal",
+    title: "지금 목표는 무엇인가요?",
+    options: [
+      { value: "learn-basic", label: "기본 규칙부터 배우기" },
+      { value: "play-online", label: "온라인 게임에서 덜 헤매기" },
+      { value: "visit-parlor", label: "오프라인 마장 가보기" },
+      { value: "review", label: "패보를 질문하고 복기하기" },
+      { value: "find-friends", label: "같이 칠 사람 찾기" },
+      { value: "class-review", label: "원데이 클래스 복습하기" },
+    ],
+  },
+];
+
+const recommendationCourses = {
+  "online-beginner": {
+    title: "온라인 입문자 코스",
+    description:
+      "작혼이나 마작일번가로 시작했다면, 먼저 왜 화료가 안 됐는지와 왜 졌는지를 확인하는 법부터 익혀보세요.",
+    reason: "온라인에서는 진행이 자동이라 놓치기 쉬운 역, 후리텐, 도라, 오프라인 차이를 먼저 보는 편이 좋아요.",
+    cards: [
+      { title: "기본 규칙", description: "한 판의 흐름과 화료 조건을 확인해요.", view: "rules" },
+      { title: "역과 화료", description: "왜 역이 붙거나 안 붙는지 봐요.", view: "yaku" },
+      { title: "온라인에서 오프라인으로", description: "자동 진행과 직접 진행의 차이를 비교해요.", view: "online-offline-guide" },
+      { title: "패보 질문 문구 만들기", description: "졌던 판을 질문하기 쉽게 정리해요.", view: "review-template" },
+      { title: "같이 칠 사람 찾기", description: "친선용 자기소개 문구를 만들어요.", view: "friend-code-card" },
+    ],
+    actions: [
+      { label: "기본 규칙 보러 가기", view: "rules", primary: true },
+      { label: "패보 질문 문구 만들기", view: "review-template" },
+      { label: "같이 칠 사람 찾기", view: "friend-code-card" },
+    ],
+  },
+  "offline-curious": {
+    title: "오프라인 방문 준비 코스",
+    description:
+      "오프라인 마작은 온라인에서 자동으로 처리되던 것들을 직접 해야 해서 낯설 수 있어요. 처음에는 예절과 흐름만 알아도 충분합니다.",
+    reason: "마장 방문 전에는 고급 전략보다 발성, 점봉, 리치봉, 본장, 도라 표시패 같은 진행 차이를 먼저 잡는 것이 부담을 줄여줘요.",
+    cards: [
+      { title: "온라인에서 오프라인으로", description: "자동과 직접 처리의 차이를 확인해요.", view: "online-offline-guide" },
+      { title: "처음 마장 가기", description: "방문 전 체크리스트와 문의 문구를 봐요.", view: "first-visit" },
+      { title: "기본 규칙", description: "오프라인에서도 필요한 기본 흐름을 복습해요.", view: "rules" },
+      { title: "마장 찾기", description: "지역별 마장 정보를 찾아봐요.", view: "play" },
+    ],
+    actions: [
+      { label: "오프라인 전환 가이드 보기", view: "online-offline-guide", primary: true },
+      { label: "처음 마장 가기 보기", view: "first-visit" },
+      { label: "마장 찾기", view: "play" },
+    ],
+  },
+  "review-needed": {
+    title: "패보 질문/복기 코스",
+    description: "졌을 때 바로 포기하기보다, 궁금한 상황을 짧게 정리해 질문해보세요.",
+    reason: "졌다는 사실보다 어디서 선택지가 갈렸는지 보는 게 중요해요. 질문 문구가 정리되면 도움을 받기도 쉬워집니다.",
+    cards: [
+      { title: "패보 질문 문구 만들기", description: "질문을 공유하기 좋은 형식으로 정리해요.", view: "review-template" },
+      { title: "기본 규칙", description: "화료 조건과 후리텐을 다시 확인해요.", view: "rules" },
+      { title: "심화 규칙", description: "역과 대기 모양을 이어서 봐요.", view: "yaku" },
+      { title: "데일리 퀴즈", description: "손패를 보고 가능한 역을 골라봐요.", view: "quiz" },
+    ],
+    actions: [
+      { label: "패보 질문 문구 만들기", view: "review-template", primary: true },
+      { label: "후리텐 확인하기", view: "rules" },
+    ],
+  },
+  "friend-needed": {
+    title: "같이 칠 사람 찾기 코스",
+    description: "마작은 비슷한 속도로 배우는 사람과 함께할 때 오래 이어가기 쉬워요.",
+    reason: "같이 배울 사람을 찾는 것도 실력 향상의 일부예요. 부담 없는 자기소개부터 만들어보면 시작이 쉬워집니다.",
+    cards: [
+      { title: "친구 코드 카드 만들기", description: "친선 매칭용 문구를 만들어요.", view: "friend-code-card" },
+      { title: "마장 찾기", description: "근처에서 오프라인으로 칠 곳을 찾아요.", view: "play" },
+      { title: "패보 질문 문구 만들기", description: "같이 복기할 질문을 정리해요.", view: "review-template" },
+    ],
+    actions: [
+      { label: "친구 코드 카드 만들기", view: "friend-code-card", primary: true },
+      { label: "자기소개 문구 만들기", view: "friend-code-card" },
+    ],
+  },
+  "basic-learning": {
+    title: "기본 학습 코스",
+    description: "처음에는 전부 외우지 않아도 괜찮아요. 패, 흐름, 역이 필요하다는 점부터 잡아보세요.",
+    reason: "아직 시작점이 흐릿하다면 패 구분, 한 판의 흐름, 최소 1개의 역이 필요하다는 사실부터 보면 충분해요.",
+    cards: [
+      { title: "패 익히기", description: "수패와 자패를 먼저 구분해요.", view: "tiles" },
+      { title: "기본 규칙", description: "쯔모, 타패, 화료 흐름을 봐요.", view: "rules" },
+      { title: "심화 규칙", description: "자주 나오는 역을 천천히 익혀요.", view: "yaku" },
+      { title: "데일리 퀴즈", description: "하루 한 번 손패를 보고 판단해요.", view: "quiz" },
+    ],
+    actions: [
+      { label: "패 익히기", view: "tiles", primary: true },
+      { label: "기본 규칙", view: "rules" },
+    ],
+  },
+  "class-review": {
+    title: "원데이 클래스 복습 코스",
+    description: "수업에서 들은 내용을 하루에 하나씩 다시 확인해보세요.",
+    reason: "오프라인에서 한 번 접했다면 전부 외우기보다 수업에서 만난 패, 흐름, 예절을 짧게 복습하는 편이 좋아요.",
+    cards: [
+      { title: "패 익히기", description: "수업에서 본 패 이름을 다시 봐요.", view: "tiles" },
+      { title: "기본 규칙", description: "차례와 화료 조건을 복습해요.", view: "rules" },
+      { title: "심화 규칙", description: "리치, 도라, 후리텐을 이어서 봐요.", view: "yaku" },
+      { title: "처음 마장 가기", description: "다음 방문 전에 예절을 확인해요.", view: "first-visit" },
+    ],
+    actions: [
+      { label: "패 익히기", view: "tiles", primary: true },
+      { label: "처음 마장 가기", view: "first-visit" },
+    ],
+  },
+};
 
 const seatTerms = [
   {
@@ -2181,6 +2337,186 @@ function renderScoreGuides() {
     .join("");
 }
 
+function getStoredEntryAnswers() {
+  try {
+    return JSON.parse(localStorage.getItem(ENTRY_CHECK_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function getStoredCourseKey() {
+  return localStorage.getItem(COURSE_KEY) || "basic-learning";
+}
+
+function renderEntryCheck() {
+  const list = document.getElementById("entryQuestionList");
+  if (!list) return;
+
+  const stored = getStoredEntryAnswers();
+  list.innerHTML = userTypeQuestions
+    .map(
+      (question) => `
+        <fieldset class="entry-question">
+          <h2>${escapeHtml(question.title)}</h2>
+          <div class="entry-option-list">
+            ${question.options
+              .map(
+                (option, index) => `
+                  <label>
+                    <input
+                      type="radio"
+                      name="${escapeHtml(question.id)}"
+                      value="${escapeHtml(option.value)}"
+                      ${stored[question.id] === option.value || (!stored[question.id] && index === 0) ? "checked" : ""}
+                    />
+                    <span>${escapeHtml(option.label)}</span>
+                  </label>
+                `,
+              )
+              .join("")}
+          </div>
+        </fieldset>
+      `,
+    )
+    .join("");
+}
+
+function collectEntryAnswers(form) {
+  return userTypeQuestions.reduce((answers, question) => {
+    answers[question.id] = form.querySelector(`input[name="${question.id}"]:checked`)?.value || question.options[0].value;
+    return answers;
+  }, {});
+}
+
+function decideCourse(answers) {
+  if (answers.goal === "find-friends" || answers.pain === "no-friends") return "friend-needed";
+  if (answers.goal === "review" || answers.pain === "why-lost" || answers.pain === "no-yaku") return "review-needed";
+  if (
+    answers.goal === "visit-parlor" ||
+    answers.pain === "offline-fear" ||
+    answers.platform === "offline" ||
+    answers.platform === "both" ||
+    answers.entry === "offline-friend"
+  ) {
+    return "offline-curious";
+  }
+  if (answers.goal === "class-review" || answers.entry === "class") return "class-review";
+  if (answers.entry === "mahjong-soul" || answers.entry === "ichibangai" || answers.goal === "play-online") {
+    return "online-beginner";
+  }
+  return "basic-learning";
+}
+
+function showCourse(courseKey) {
+  const resolvedKey = recommendationCourses[courseKey] ? courseKey : "basic-learning";
+  localStorage.setItem(COURSE_KEY, resolvedKey);
+  renderCourseResult(resolvedKey);
+  setView("course-result");
+}
+
+function renderCourseResult(courseKey = getStoredCourseKey()) {
+  const course = recommendationCourses[courseKey] || recommendationCourses["basic-learning"];
+  const title = document.getElementById("courseResultTitle");
+  const description = document.getElementById("courseResultDescription");
+  const reason = document.getElementById("courseResultReason");
+  const cards = document.getElementById("courseResultCards");
+  const actions = document.getElementById("courseResultActions");
+  if (!title || !description || !reason || !cards || !actions) return;
+
+  title.textContent = course.title;
+  description.textContent = course.description;
+  reason.textContent = course.reason;
+  cards.innerHTML = course.cards
+    .map(
+      (card) => `
+        <button class="course-link-card" data-view="${escapeHtml(card.view)}" type="button">
+          <strong>${escapeHtml(card.title)}</strong>
+          <span>${escapeHtml(card.description)}</span>
+        </button>
+      `,
+    )
+    .join("");
+  actions.innerHTML = course.actions
+    .map(
+      (action) => `
+        <button class="${action.primary ? "primary-button" : "secondary-button"}" data-view="${escapeHtml(action.view)}" type="button">
+          ${escapeHtml(action.label)}
+        </button>
+      `,
+    )
+    .join("");
+}
+
+function buildReviewText() {
+  const type = document.getElementById("reviewType")?.value || "왜 졌나요?";
+  const platform = document.getElementById("reviewPlatform")?.value || "작혼";
+  const situation = document.getElementById("reviewSituation")?.value.trim() || "(상황을 적어주세요)";
+  const question = document.getElementById("reviewQuestionText")?.value.trim() || "(궁금한 점을 적어주세요)";
+  const thought = document.getElementById("reviewThought")?.value.trim() || "(내 생각을 적어주세요)";
+  const reference = document.getElementById("reviewReference")?.value.trim() || "(링크 또는 이미지 첨부)";
+
+  return `[패보 질문]
+
+플랫폼: ${platform}
+질문 유형: ${type}
+
+상황:
+${situation}
+
+궁금한 점:
+${question}
+
+내 생각:
+${thought}
+
+패보/이미지:
+${reference}`;
+}
+
+function buildFriendText() {
+  const nickname = document.getElementById("friendNickname")?.value.trim() || "(닉네임)";
+  const platform = document.getElementById("friendPlatform")?.value || "작혼";
+  const friendId = document.getElementById("friendId")?.value.trim() || "(선택 입력)";
+  const level = document.getElementById("friendLevel")?.value || "완전 처음";
+  const playStyle = document.getElementById("friendPlayStyle")?.value || "4인 동풍전";
+  const time = document.getElementById("friendTime")?.value || "평일 저녁";
+  const purpose = document.getElementById("friendPurpose")?.value || "같이 배우기";
+
+  return `[같이 마작 칠 분 구해요]
+
+닉네임: ${nickname}
+플랫폼: ${platform}
+실력대: ${level}
+선호 플레이: ${playStyle}
+가능 시간대: ${time}
+목적: ${purpose}
+
+친구 코드:
+${friendId}
+
+초심자라 천천히 같이 배워가실 분이면 좋겠습니다!`;
+}
+
+async function copyOutputText(textareaId, statusId) {
+  const textarea = document.getElementById(textareaId);
+  const status = document.getElementById(statusId);
+  const text = textarea?.value || "";
+  if (!text.trim()) {
+    if (status) status.textContent = "먼저 문구를 만들어주세요.";
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(text);
+    if (status) status.textContent = "복사했어요. 공유하기 전에 개인정보가 없는지 한 번 더 확인해 주세요.";
+  } catch {
+    textarea?.focus();
+    textarea?.select();
+    if (status) status.textContent = "자동 복사가 막혔어요. 선택된 문구를 직접 복사해 주세요.";
+  }
+}
+
 /** 화면 전환 */
 function setView(viewName) {
   if (!views[viewName]) return;
@@ -2194,6 +2530,8 @@ function setView(viewName) {
   if (floatingHome) floatingHome.hidden = viewName === "dashboard";
 
   if (viewName === "dashboard") renderDailyQuiz();
+  if (viewName === "entry-check") renderEntryCheck();
+  if (viewName === "course-result") renderCourseResult();
   if (viewName === "rules") renderRules();
   if (viewName === "yaku") renderYaku();
   if (viewName === "tiles") markTilesSeen();
@@ -2555,9 +2893,47 @@ function calculateScore() {
 }
 
 document.addEventListener("click", (event) => {
+  const courseButton = event.target.closest("[data-course]");
+  if (courseButton) {
+    showCourse(courseButton.dataset.course);
+    return;
+  }
+
   const button = event.target.closest("[data-view]");
   if (!button) return;
   setView(button.dataset.view);
+});
+
+document.getElementById("entryCheckForm")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const answers = collectEntryAnswers(event.currentTarget);
+  const courseKey = decideCourse(answers);
+  localStorage.setItem(ENTRY_CHECK_KEY, JSON.stringify(answers));
+  showCourse(courseKey);
+});
+
+document.getElementById("reviewTemplateForm")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const output = document.getElementById("reviewOutput");
+  if (output) output.value = buildReviewText();
+  const status = document.getElementById("reviewCopyStatus");
+  if (status) status.textContent = "질문 문구를 만들었어요.";
+});
+
+document.getElementById("copyReviewText")?.addEventListener("click", () => {
+  copyOutputText("reviewOutput", "reviewCopyStatus");
+});
+
+document.getElementById("friendCardForm")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const output = document.getElementById("friendOutput");
+  if (output) output.value = buildFriendText();
+  const status = document.getElementById("friendCopyStatus");
+  if (status) status.textContent = "친구 코드 카드 문구를 만들었어요.";
+});
+
+document.getElementById("copyFriendText")?.addEventListener("click", () => {
+  copyOutputText("friendOutput", "friendCopyStatus");
 });
 
 document.getElementById("answerGrid").addEventListener("click", (event) => {
@@ -2635,6 +3011,8 @@ renderTileCatalog();
 renderYaku();
 renderRules();
 renderScoreGuides();
+renderEntryCheck();
+renderCourseResult();
 renderDailyQuiz();
 renderQuiz();
 calculateScore();

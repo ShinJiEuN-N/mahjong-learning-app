@@ -160,6 +160,11 @@ a:active {
 
 .hero-card,
 .action-card,
+.entry-cta-card,
+.course-result-card,
+.guide-card,
+.checklist-card,
+.output-card,
 .tile-group,
 .detail-sheet,
 .quiz-card,
@@ -172,7 +177,7 @@ a:active {
 }
 
 .daily-quiz-card {
-  margin-top: 0;
+  margin-top: 16px;
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -450,6 +455,237 @@ a:active {
   display: grid;
   gap: 12px;
   margin-top: 14px;
+}
+
+.entry-hero {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.entry-hero h1 {
+  margin: 0;
+  font-size: 1.62rem;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+}
+
+.entry-hero p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.entry-cta-card,
+.course-result-card,
+.checklist-card,
+.output-card {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.entry-cta-card h2,
+.course-result-card h1,
+.checklist-card h2 {
+  margin: 0;
+}
+
+.entry-cta-card p,
+.course-result-description,
+.course-reason p,
+.checklist-card p,
+.guide-card p,
+.privacy-note,
+.copy-status {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.purpose-grid,
+.guide-grid,
+.course-card-list,
+.course-action-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.purpose-card,
+.course-link-card,
+.guide-card,
+.secondary-button {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.purpose-card,
+.course-link-card {
+  display: grid;
+  gap: 6px;
+  min-height: 88px;
+  padding: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.purpose-card strong,
+.course-link-card strong {
+  font-size: 0.98rem;
+  line-height: 1.3;
+}
+
+.purpose-card span,
+.course-link-card span {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.course-reason {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.guide-card {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+}
+
+.guide-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.guide-card strong {
+  color: var(--primary-dark);
+}
+
+.soft-checklist {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.phrase-list {
+  display: grid;
+  gap: 10px;
+}
+
+.phrase-list p {
+  padding: 11px 12px;
+  border-radius: 13px;
+  background: var(--surface-2);
+  font-weight: 700;
+}
+
+.entry-check-form,
+.template-form {
+  display: grid;
+  gap: 14px;
+}
+
+.entry-question-list {
+  display: grid;
+  gap: 14px;
+}
+
+.entry-question {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.entry-question h2 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.entry-option-list {
+  display: grid;
+  gap: 8px;
+}
+
+.entry-option-list label,
+.template-form label,
+.output-card label {
+  display: grid;
+  gap: 7px;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.entry-option-list label {
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  padding: 10px 11px;
+  border-radius: 13px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 0.88rem;
+  line-height: 1.38;
+}
+
+.entry-option-list input {
+  margin-top: 2px;
+  accent-color: var(--primary);
+}
+
+.template-form input,
+.template-form select,
+.template-form textarea,
+.output-card textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  background: white;
+  font: inherit;
+  font-weight: 600;
+}
+
+.template-form textarea,
+.output-card textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.privacy-note {
+  padding: 11px 12px;
+  border-radius: 13px;
+  background: rgba(197, 139, 43, 0.14);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.secondary-button {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  color: var(--primary-dark);
+  background: var(--surface-2);
+  cursor: pointer;
+  font-weight: 800;
 }
 
 .rules-list-lead {
